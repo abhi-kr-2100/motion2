@@ -2,8 +2,10 @@ package tests
 
 import (
 	"database/sql"
+	"net/http/httptest"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -21,4 +23,11 @@ func DBMocks() (*gorm.DB, *sql.DB, sqlmock.Sqlmock) {
 	}
 
 	return gormDB, db, mock
+}
+
+func HTTPMocks() (*httptest.ResponseRecorder, *gin.Context) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+
+	return w, c
 }
