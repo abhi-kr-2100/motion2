@@ -1,2 +1,3 @@
 # motion2
-Powerful todo app
+
+Powerful todo app.
