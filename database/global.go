@@ -19,6 +19,10 @@ func DB() *gorm.DB {
 	return db
 }
 
+func SetCustomDB(newDB *gorm.DB) {
+	db = newDB
+}
+
 func setupDB() *gorm.DB {
 	cfg := config.Cfg()
 
