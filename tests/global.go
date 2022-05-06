@@ -25,9 +25,9 @@ func DBMocks() (*gorm.DB, *sql.DB, sqlmock.Sqlmock) {
 	return gormDB, db, mock
 }
 
-func HTTPMocks() (*httptest.ResponseRecorder, *gin.Context) {
+func HTTPMocks() (*httptest.ResponseRecorder, *gin.Context, *gin.Engine) {
 	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
+	c, r := gin.CreateTestContext(w)
 
-	return w, c
+	return w, c, r
 }
