@@ -6,10 +6,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetUserByID(id uuid.UUID) *models.User {
+func GetUserByID(id uuid.UUID) (*models.User, error) {
 	panic("queries: not implemented")
 }
 
-func GetUserByUsername(username string) *models.User {
+func GetUserByUsername(username string) (*models.User, error) {
 	panic("queries: not implemented")
 }
