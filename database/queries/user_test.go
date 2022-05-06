@@ -12,7 +12,7 @@ import (
 )
 
 func TestGetUserByID(t *testing.T) {
-	var query = regexp.QuoteMeta(
+	query := regexp.QuoteMeta(
 		`SELECT * FROM "users" WHERE id = $1 AND "users"."deleted_at" IS NULL ORDER BY "users"."id" LIMIT 1`,
 	)
 
@@ -61,8 +61,7 @@ func TestGetUserByID(t *testing.T) {
 		mockUserID := uuid.New()
 		mock.ExpectQuery(query).WithArgs(mockUserID).WillReturnError(nil)
 
-		_, myerr := GetUserByID(mockUserID)
-		if myerr == nil {
+		if _, err := GetUserByID(mockUserID); err == nil {
 			t.Error("expected error, got nil")
 		}
 
