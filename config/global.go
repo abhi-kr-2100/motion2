@@ -28,13 +28,23 @@ func loadConfig() *config {
 		panic(fmt.Sprintf("config: %s env variable not set", DBConnURLEnvVar))
 	}
 
+	hostURL, ok := os.LookupEnv(HostURLEnvVar)
+	if !ok {
+		panic(fmt.Sprintf("config: %s env variable not set", HostURLEnvVar))
+	}
+
 	return &config{
 		DBConnURL: dbConnURL,
+		HostURL:   hostURL,
 	}
 }
 
-const DBConnURLEnvVar = "DATABASE_URL"
+const (
+	DBConnURLEnvVar = "DATABASE_URL"
+	HostURLEnvVar   = "HOST_URL"
+)
 
 type config struct {
 	DBConnURL string
+	HostURL   string
 }
