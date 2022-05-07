@@ -1,13 +1,13 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/abhi-kr-2100/motion2/config"
+	"github.com/abhi-kr-2100/motion2/routes"
+)
 
 func main() {
-	router := gin.Default()
+	cfg := config.Cfg()
+	r := routes.Engine()
 
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "Привет, world."})
-	})
-
-	router.Run(":8080")
+	r.Run(cfg.HostURL)
 }
