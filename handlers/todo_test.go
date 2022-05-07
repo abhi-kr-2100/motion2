@@ -142,8 +142,6 @@ func TestGetTodosByOwnerID(t *testing.T) {
 				}
 			}
 
-			t.Logf("tests: found todo %v", found)
-
 			if found.ID != mock.ID {
 				t.Errorf("tests: expected todo ID %s, got %s", mock.ID, found.ID)
 			}
