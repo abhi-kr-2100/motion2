@@ -12,6 +12,9 @@ import (
 	"github.com/google/uuid"
 )
 
+// GetUserByID returns a user given the ID.
+//
+// GET /users/:id
 func GetUserByID(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
@@ -39,6 +42,10 @@ func GetUserByID(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+// GetUserByUsername returns a user given the username as a query parameter.
+//
+// GET /users?username=:username
+// GET /users is Forbidden
 func GetUserByUsername(c *gin.Context) {
 	panic("handlers: not implemented")
 }
