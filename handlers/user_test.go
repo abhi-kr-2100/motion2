@@ -98,4 +98,8 @@ func TestGetUserByUsername(t *testing.T) {
 	t.Run("with a non-existing user", func(t *testing.T) {
 		panic("tests: not implemented")
 	})
+
+	t.Run("with no query parameters", func(t *testing.T) {
+		panic("tests: not implemented")
+	})
 }
