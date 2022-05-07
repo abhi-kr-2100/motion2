@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/abhi-kr-2100/motion2/routes"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -38,7 +37,6 @@ func HTTPMocks() (*httptest.ResponseRecorder, *gin.Context, *gin.Engine) {
 
 func EngineMock() *gin.Engine {
 	r := gin.New()
-	routes.SetupRoutes(r)
 	return r
 }
 
