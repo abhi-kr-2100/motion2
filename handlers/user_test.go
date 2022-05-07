@@ -91,15 +91,76 @@ func TestGetUserByID(t *testing.T) {
 }
 
 func TestGetUserByUsername(t *testing.T) {
+	query := regexp.QuoteMeta(tests.Query_GetUserByUsername)
+
+	r := tests.EngineMock()
+	r.GET("users", GetUserByUsername)
+
 	t.Run("with an existing user", func(t *testing.T) {
-		panic("tests: not implemented")
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockUsername := "mock-username"
+		mockPassword := "mock-password"
+		mockUser := models.NewUser(mockUsername, mockPassword)
+		mockUser.ID = uuid.New()
+
+		row := mock.NewRows([]string{"id", "username", "password_hash"}).
+			AddRow(mockUser.ID, mockUsername, mockUser.PasswordHash)
+		mock.ExpectQuery(query).WithArgs(mockUsername).WillReturnRows(row)
+
+		w := tests.PerformRequest(r, "GET", fmt.Sprintf("/users?username=%s", mockUsername), nil)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("tests: failed to expect database expectations: %v", err)
+		}
+
+		if w.Code != http.StatusOK {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusOK, w.Code)
+		}
+
+		var user models.User
+		if err := json.Unmarshal(w.Body.Bytes(), &user); err != nil {
+			t.Errorf("tests: failed to unmarshal response: %v", err)
+		}
+
+		if user.ID != mockUser.ID {
+			t.Errorf("tests: expected user ID %s, got %s", mockUser.ID, user.ID)
+		}
+		if user.Username != mockUsername {
+			t.Errorf("tests: expected user username %s, got %s", mockUsername, user.Username)
+		}
+		if !user.CanLogin(mockPassword) {
+			t.Errorf("tests: expected user to be able to login with password %s", mockPassword)
+		}
 	})
 
 	t.Run("with a non-existing user", func(t *testing.T) {
-		panic("tests: not implemented")
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockUsername := "mock-username"
+		mock.ExpectQuery(query).WithArgs(mockUsername).WillReturnError(gorm.ErrRecordNotFound)
+
+		w := tests.PerformRequest(r, "GET", fmt.Sprintf("/users?username=%s", mockUsername), nil)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("tests: failed to expect database expectations: %v", err)
+		}
+
+		if w.Code != http.StatusNotFound {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusNotFound, w.Code)
+		}
 	})
 
 	t.Run("with no query parameters", func(t *testing.T) {
-		panic("tests: not implemented")
+		w := tests.PerformRequest(r, "GET", "/users", nil)
+		if w.Code != http.StatusForbidden {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusForbidden, w.Code)
+		}
 	})
 }

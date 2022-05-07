@@ -47,5 +47,27 @@ func GetUserByID(c *gin.Context) {
 // GET /users?username=:username
 // GET /users is Forbidden
 func GetUserByUsername(c *gin.Context) {
-	panic("handlers: not implemented")
+	username, ok := c.GetQuery("username")
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+			"error": "user can only be retrieved by username",
+		})
+		return
+	}
+
+	user, err := queries.GetUserByUsername(username)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": fmt.Sprintf("user with username %s does not exist", username),
+			})
+			return
+		}
+
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("failed to get user with username %s: %v", username, err),
+		})
+	}
+
+	c.JSON(http.StatusOK, user)
 }
