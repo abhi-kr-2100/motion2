@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/abhi-kr-2100/motion2/config"
+	"github.com/abhi-kr-2100/motion2/database/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -31,5 +32,19 @@ func setupDB() *gorm.DB {
 		panic(fmt.Sprintf("database: can't connect to db: %v", err))
 	}
 
+	migrate(db)
+
 	return db
+}
+
+func migrate(db *gorm.DB) {
+	err := db.AutoMigrate(&models.Todo{})
+	if err != nil {
+		panic(fmt.Sprintf("database: can't migrate todo: %v", err))
+	}
+
+	err = db.AutoMigrate(&models.User{})
+	if err != nil {
+		panic(fmt.Sprintf("database: can't migrate user: %v", err))
+	}
 }
