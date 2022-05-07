@@ -44,5 +44,28 @@ func GetTodoByID(c *gin.Context) {
 //
 // GET /users/:id/todos
 func GetTodosByOwnerID(c *gin.Context) {
-	panic("handlers: not implemented")
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
+		})
+		return
+	}
+
+	todos, err := queries.GetTodosByOwnerID(id)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": fmt.Sprintf("user with ID %s does not exist", id),
+			})
+			return
+		}
+
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("failed to get todos for user with ID %s: %v", id, err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, todos)
 }
