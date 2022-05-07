@@ -12,9 +12,7 @@ import (
 )
 
 func TestGetUserByID(t *testing.T) {
-	query := regexp.QuoteMeta(
-		`SELECT * FROM "users" WHERE id = $1 AND "users"."deleted_at" IS NULL ORDER BY "users"."id" LIMIT 1`,
-	)
+	query := regexp.QuoteMeta(tests.Query_GetUserByID)
 
 	t.Run("with existing user", func(t *testing.T) {
 		gormDB, db, mock := tests.DBMocks()
@@ -72,9 +70,7 @@ func TestGetUserByID(t *testing.T) {
 }
 
 func TestGetUserByUsername(t *testing.T) {
-	query := regexp.QuoteMeta(
-		`SELECT * FROM "users" WHERE username = $1 AND "users"."deleted_at" IS NULL ORDER BY "users"."id" LIMIT 1`,
-	)
+	query := regexp.QuoteMeta(tests.Query_GetUserByUsername)
 
 	t.Run("with existing user", func(t *testing.T) {
 		gormDB, db, mock := tests.DBMocks()

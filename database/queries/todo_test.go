@@ -12,9 +12,7 @@ import (
 )
 
 func TestGetTodoByID(t *testing.T) {
-	query := regexp.QuoteMeta(
-		`SELECT * FROM "todos" WHERE id = $1 AND "todos"."deleted_at" IS NULL ORDER BY "todos"."id" LIMIT 1`,
-	)
+	query := regexp.QuoteMeta(tests.Query_GetTodoByID)
 
 	t.Run("with existing todo", func(t *testing.T) {
 		gormDB, db, mock := tests.DBMocks()
@@ -65,9 +63,7 @@ func TestGetTodoByID(t *testing.T) {
 }
 
 func TestGetTodosByOwnerID(t *testing.T) {
-	query := regexp.QuoteMeta(
-		`SELECT * FROM "todos" WHERE owner_id = $1 AND "todos"."deleted_at" IS NULL`,
-	)
+	query := regexp.QuoteMeta(tests.Query_GetTodosByOwnerID)
 
 	t.Run("with no todos", func(t *testing.T) {
 		gormDB, db, mock := tests.DBMocks()
