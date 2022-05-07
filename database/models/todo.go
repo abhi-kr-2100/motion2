@@ -8,6 +8,6 @@ type Todo struct {
 	Title       string `gorm:"uniqueIndex:title_owner"`
 	IsCompleted bool
 
-	OwnerID uuid.UUID
-	Owner   User `gorm:"uniqueIndex:title_owner;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
+	OwnerID uuid.UUID `gorm:"uniqueIndex:title_owner"`
+	Owner   User      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
 }
