@@ -353,3 +353,73 @@ func TestCreateTodo(t *testing.T) {
 		}
 	})
 }
+
+func TestDeleteTodoByID(t *testing.T) {
+	query := regexp.QuoteMeta(tests.Query_DeleteTodo)
+
+	r := tests.EngineMock()
+	r.DELETE("/todos/:id", DeleteTodoByID)
+
+	t.Run("with existing todo", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockTodoID := uuid.New()
+		mock.NewRows([]string{"id", "deleted_at"}).AddRow(mockTodoID, nil)
+
+		mock.ExpectBegin()
+		mock.ExpectExec(query).WithArgs(tests.AnyTime{}, mockTodoID).
+			WillReturnResult(sqlmock.NewResult(1, 1))
+		mock.ExpectCommit()
+
+		w := tests.PerformRequest(r, "DELETE", fmt.Sprintf("/todos/%s", mockTodoID), nil)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+
+		if w.Code != http.StatusOK {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusOK, w.Code)
+		}
+	})
+
+	t.Run("with non-existent todo", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockTodoID := uuid.New()
+
+		mock.ExpectBegin()
+		mock.ExpectExec(query).WithArgs(tests.AnyTime{}, mockTodoID).
+			WillReturnError(gorm.ErrRecordNotFound)
+		mock.ExpectRollback()
+
+		w := tests.PerformRequest(r, "DELETE", fmt.Sprintf("/todos/%s", mockTodoID), nil)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+
+		if w.Code != http.StatusNotFound {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusNotFound, w.Code)
+		}
+	})
+
+	t.Run("with invalid todo ID", func(t *testing.T) {
+		gormDB, db, _ := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockTodoID := "mock-todo-id"
+		w := tests.PerformRequest(r, "DELETE", fmt.Sprintf("/todos/%s", mockTodoID), nil)
+
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusBadRequest, w.Code)
+		}
+	})
+}

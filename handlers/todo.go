@@ -111,3 +111,34 @@ func CreateTodo(c *gin.Context) {
 	todoView := views.FromTodo(*todo)
 	c.JSON(http.StatusOK, todoView)
 }
+
+// DeleteTodo deletes a todo.
+//
+// DELETE /todos/:id
+func DeleteTodoByID(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
+		})
+		return
+	}
+
+	if err := queries.DeleteTodoByID(id); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": fmt.Sprintf("todo with ID %s does not exist", id),
+			})
+			return
+		}
+
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("failed to delete todo with ID %s: %v", id, err),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": fmt.Sprintf("todo with ID %s deleted", id),
+	})
+}
