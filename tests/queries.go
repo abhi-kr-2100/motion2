@@ -10,4 +10,5 @@ const (
 	Query_GetTodosByOwnerID = `SELECT * FROM "todos" WHERE owner_id = $1 AND "todos"."deleted_at" IS NULL`
 
 	Query_CreateTodo = `INSERT INTO "todos" ("created_at","updated_at","deleted_at","title","is_completed","owner_id") VALUES ($1,$2,$3,$4,$5,$6) RETURNING "id"`
+	Query_DeleteTodo = `UPDATE "todos" SET "deleted_at"=$1 WHERE "todos"."id" = $2 AND "todos"."deleted_at" IS NULL`
 )

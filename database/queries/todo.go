@@ -43,3 +43,11 @@ func CreateTodo(form forms.Todo) (*models.Todo, error) {
 
 	return &todo, nil
 }
+
+func DeleteTodoByID(id uuid.UUID) error {
+	if err := database.DB().Delete(&models.Todo{}, id).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
