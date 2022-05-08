@@ -7,8 +7,10 @@ import (
 
 	"github.com/abhi-kr-2100/motion2/database"
 	"github.com/abhi-kr-2100/motion2/database/models"
+	"github.com/abhi-kr-2100/motion2/database/models/forms"
 	"github.com/abhi-kr-2100/motion2/tests"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 func TestGetTodoByID(t *testing.T) {
@@ -182,6 +184,113 @@ func TestGetTodosByOwnerID(t *testing.T) {
 			if mockOwnerID != foundTodo.OwnerID {
 				t.Errorf("expected to get todo with owner id %v, got %v", mockTodo.OwnerID, foundTodo.OwnerID)
 			}
+		}
+	})
+}
+
+func TestCreateTodo(t *testing.T) {
+	insertQuery := regexp.QuoteMeta(tests.Query_CreateTodo)
+	ownerSelectQuery := regexp.QuoteMeta(tests.Query_GetUserByID)
+
+	t.Run("with existing owner", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockOwnerID := uuid.New()
+		mockOwnerUsername := "mock-owner-username"
+		mockOwnerPassword := "mock-owner-password"
+		mockOwner := models.NewUser(mockOwnerUsername, mockOwnerPassword)
+		mockOwner.ID = mockOwnerID
+
+		ownerRow := mock.NewRows([]string{"id", "username", "password_hash"}).
+			AddRow(mockOwnerID, mockOwnerUsername, mockOwner.PasswordHash)
+
+		mockTodoTitle := "mock-todo-title"
+		mockTodoForm := forms.Todo{
+			Title:   mockTodoTitle,
+			OwnerID: mockOwnerID,
+		}
+
+		mock.ExpectQuery(ownerSelectQuery).WithArgs(mockOwnerID).WillReturnRows(ownerRow)
+
+		mock.ExpectBegin()
+		mock.ExpectQuery(insertQuery).
+			WithArgs(tests.AnyTime{}, tests.AnyTime{}, nil, mockTodoTitle, mockTodoForm.IsCompleted, mockOwnerID).
+			WillReturnRows(mock.NewRows(nil))
+		mock.ExpectCommit()
+
+		todo, err := CreateTodo(mockTodoForm)
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+
+		if todo.Title != mockTodoTitle {
+			t.Errorf("expected to get todo with title %v, got %v", mockTodoTitle, todo.Title)
+		}
+		if todo.IsCompleted != mockTodoForm.IsCompleted {
+			t.Errorf("expected to get todo with is completed %v, got %v", mockTodoForm.IsCompleted, todo.IsCompleted)
+		}
+		if todo.OwnerID != mockOwnerID {
+			t.Errorf("expected to get todo with owner id %v, got %v", mockOwnerID, todo.OwnerID)
+		}
+	})
+
+	t.Run("with non-existing owner", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockOwnerID := uuid.New()
+		mockTodoTitle := "mock-todo-title"
+		mockTodoForm := forms.Todo{
+			Title:   mockTodoTitle,
+			OwnerID: mockOwnerID,
+		}
+
+		mock.ExpectQuery(ownerSelectQuery).WithArgs(mockOwnerID).WillReturnError(gorm.ErrRecordNotFound)
+
+		_, err := CreateTodo(mockTodoForm)
+		if err == nil {
+			t.Errorf("expected to get error, got nil")
+		}
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+	})
+
+	t.Run("with invalid form", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockOwnerID := uuid.New()
+		mockOwnerUsername := "mock-owner-username"
+		mockOwnerPassword := "mock-owner-password"
+		mockOwner := models.NewUser(mockOwnerUsername, mockOwnerPassword)
+		mockOwner.ID = mockOwnerID
+
+		mock.NewRows([]string{"id", "username", "password_hash"}).
+			AddRow(mockOwnerID, mockOwnerUsername, mockOwner.PasswordHash)
+
+		mockTodoTitle := "mock-todo-title"
+		mockTodoForm := forms.Todo{
+			Title: mockTodoTitle,
+		}
+
+		mock.ExpectQuery(ownerSelectQuery).WithArgs(mockTodoForm.OwnerID).WillReturnError(gorm.ErrRecordNotFound)
+
+		_, err := CreateTodo(mockTodoForm)
+		if err == nil {
+			t.Errorf("expected to get error, got nil")
 		}
 	})
 }

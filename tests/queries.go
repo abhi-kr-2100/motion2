@@ -8,4 +8,6 @@ const (
 
 	Query_GetTodoByID       = `SELECT * FROM "todos" WHERE id = $1 AND "todos"."deleted_at" IS NULL ORDER BY "todos"."id" LIMIT 1`
 	Query_GetTodosByOwnerID = `SELECT * FROM "todos" WHERE owner_id = $1 AND "todos"."deleted_at" IS NULL`
+
+	Query_CreateTodo = `INSERT INTO "todos" ("created_at","updated_at","deleted_at","title","is_completed","owner_id") VALUES ($1,$2,$3,$4,$5,$6) RETURNING "id"`
 )

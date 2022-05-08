@@ -3,6 +3,7 @@ package queries
 import (
 	"github.com/abhi-kr-2100/motion2/database"
 	"github.com/abhi-kr-2100/motion2/database/models"
+	"github.com/abhi-kr-2100/motion2/database/models/forms"
 
 	"github.com/google/uuid"
 )
@@ -23,4 +24,22 @@ func GetTodosByOwnerID(ownerID uuid.UUID) ([]*models.Todo, error) {
 	}
 
 	return todos, nil
+}
+
+func CreateTodo(form forms.Todo) (*models.Todo, error) {
+	todo := models.Todo{
+		Title:       form.Title,
+		IsCompleted: form.IsCompleted,
+		OwnerID:     form.OwnerID,
+	}
+
+	if _, err := GetUserByID(todo.OwnerID); err != nil {
+		return nil, err
+	}
+
+	if err := database.DB().Create(&todo).Error; err != nil {
+		return nil, err
+	}
+
+	return &todo, nil
 }
