@@ -9,6 +9,7 @@ import (
 
 	"github.com/abhi-kr-2100/motion2/database"
 	"github.com/abhi-kr-2100/motion2/database/models"
+	"github.com/abhi-kr-2100/motion2/database/models/views"
 	"github.com/abhi-kr-2100/motion2/tests"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -45,7 +46,7 @@ func TestGetTodoByID(t *testing.T) {
 			t.Errorf("tests: expected status code %d, got %d", http.StatusOK, w.Code)
 		}
 
-		var todo models.Todo
+		var todo views.Todo
 		if err := json.Unmarshal(w.Body.Bytes(), &todo); err != nil {
 			t.Errorf("tests: failed to unmarshal response body: %v", err)
 		}
@@ -124,7 +125,7 @@ func TestGetTodosByOwnerID(t *testing.T) {
 			t.Errorf("tests: expected status code %d, got %d", http.StatusOK, w.Code)
 		}
 
-		var todos []models.Todo
+		var todos []views.Todo
 		if err := json.Unmarshal(w.Body.Bytes(), &todos); err != nil {
 			t.Errorf("tests: failed to unmarshal response body: %v", err)
 		}
@@ -134,7 +135,7 @@ func TestGetTodosByOwnerID(t *testing.T) {
 		}
 
 		for _, mock := range mockTodos {
-			var found models.Todo
+			var found views.Todo
 			for i, todo := range todos {
 				if todo.ID == mock.ID {
 					found = todos[i]
@@ -201,7 +202,7 @@ func TestGetTodosByOwnerID(t *testing.T) {
 			t.Errorf("tests: expected status code %d, got %d", http.StatusOK, w.Code)
 		}
 
-		var todos []models.Todo
+		var todos []views.Todo
 		if err := json.Unmarshal(w.Body.Bytes(), &todos); err != nil {
 			t.Errorf("tests: failed to unmarshal response body: %v", err)
 		}
@@ -241,7 +242,7 @@ func TestGetTodosByOwnerID(t *testing.T) {
 			t.Errorf("tests: expected status code %d, got %d", http.StatusOK, w.Code)
 		}
 
-		var todos []models.Todo
+		var todos []views.Todo
 		if err := json.Unmarshal(w.Body.Bytes(), &todos); err != nil {
 			t.Errorf("tests: failed to unmarshal response body: %v", err)
 		}

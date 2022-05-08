@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/abhi-kr-2100/motion2/database/models/views"
 	"github.com/abhi-kr-2100/motion2/database/queries"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -37,7 +38,8 @@ func GetTodoByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, todo)
+	todoView := views.FromTodo(*todo)
+	c.JSON(http.StatusOK, todoView)
 }
 
 // GetTodosByOwnerID returns todos given the owner ID.
@@ -67,5 +69,10 @@ func GetTodosByOwnerID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, todos)
+	todoViews := make([]views.Todo, len(todos))
+	for i, todo := range todos {
+		todoViews[i] = views.FromTodo(*todo)
+	}
+
+	c.JSON(http.StatusOK, todoViews)
 }

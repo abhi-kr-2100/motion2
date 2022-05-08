@@ -9,6 +9,7 @@ import (
 
 	"github.com/abhi-kr-2100/motion2/database"
 	"github.com/abhi-kr-2100/motion2/database/models"
+	"github.com/abhi-kr-2100/motion2/database/models/views"
 	"github.com/abhi-kr-2100/motion2/tests"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -46,7 +47,7 @@ func TestGetUserByID(t *testing.T) {
 			t.Errorf("tests: expected status code %d, got %d", http.StatusOK, w.Code)
 		}
 
-		var user models.User
+		var user views.User
 		if err := json.Unmarshal(w.Body.Bytes(), &user); err != nil {
 			t.Errorf("tests: failed to unmarshal response: %v", err)
 		}
@@ -56,9 +57,6 @@ func TestGetUserByID(t *testing.T) {
 		}
 		if user.Username != mockUsername {
 			t.Errorf("tests: expected user username %s, got %s", mockUsername, user.Username)
-		}
-		if !user.CanLogin(mockPassword) {
-			t.Errorf("tests: expected user to be able to login with password %s", mockPassword)
 		}
 	})
 
@@ -121,7 +119,7 @@ func TestGetUserByUsername(t *testing.T) {
 			t.Errorf("tests: expected status code %d, got %d", http.StatusOK, w.Code)
 		}
 
-		var user models.User
+		var user views.User
 		if err := json.Unmarshal(w.Body.Bytes(), &user); err != nil {
 			t.Errorf("tests: failed to unmarshal response: %v", err)
 		}
@@ -131,9 +129,6 @@ func TestGetUserByUsername(t *testing.T) {
 		}
 		if user.Username != mockUsername {
 			t.Errorf("tests: expected user username %s, got %s", mockUsername, user.Username)
-		}
-		if !user.CanLogin(mockPassword) {
-			t.Errorf("tests: expected user to be able to login with password %s", mockPassword)
 		}
 	})
 

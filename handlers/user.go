@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/abhi-kr-2100/motion2/database/models/views"
 	"github.com/abhi-kr-2100/motion2/database/queries"
 	"gorm.io/gorm"
 
@@ -39,7 +40,8 @@ func GetUserByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	userView := views.FromUser(*user)
+	c.JSON(http.StatusOK, userView)
 }
 
 // GetUserByUsername returns a user given the username as a query parameter.
@@ -69,5 +71,6 @@ func GetUserByUsername(c *gin.Context) {
 		})
 	}
 
-	c.JSON(http.StatusOK, user)
+	userView := views.FromUser(*user)
+	c.JSON(http.StatusOK, userView)
 }
