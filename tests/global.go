@@ -2,10 +2,12 @@ package tests
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gin-gonic/gin"
@@ -49,4 +51,15 @@ func PerformRequest(r http.Handler, method, path string, body io.Reader) *httpte
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 	return w
+}
+
+// match any time argument in the arguments
+// see: https://pkg.go.dev/github.com/DATA-DOG/go-sqlmock#readme-matching-arguments-like-time-time
+type AnyTime struct{}
+
+// satisfies sqlmock.Argument interface
+func (a AnyTime) Match(v driver.Value) bool {
+	_, ok := v.(time.Time)
+
+	return ok
 }
