@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"regexp"
 	"testing"
+	"time"
 
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/abhi-kr-2100/motion2/database"
 	"github.com/abhi-kr-2100/motion2/database/models"
 	"github.com/abhi-kr-2100/motion2/database/models/forms"
 	"github.com/abhi-kr-2100/motion2/tests"
+
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -343,6 +345,123 @@ func TestDeleteTodo(t *testing.T) {
 		mock.ExpectRollback()
 
 		DeleteTodoByID(mockTodoID)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+	})
+}
+
+func TestUpdateTodoByID(t *testing.T) {
+	selectQuery := regexp.QuoteMeta(tests.Query_GetTodoByID)
+	// ownerSelectQuery := regexp.QuoteMeta(tests.Query_GetUserByID)
+	updateQuery := regexp.QuoteMeta(tests.Query_UpdateTodo)
+
+	t.Run("with existing todo", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockTodoID := uuid.New()
+		mockTodoOwnerID := uuid.New()
+		mockTodoTitle := "mock-todo-title"
+		mockTodo := models.Todo{
+			Model: models.Model{
+				ID:        mockTodoID,
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
+				DeletedAt: gorm.DeletedAt{},
+			},
+
+			Title:   mockTodoTitle,
+			OwnerID: mockTodoOwnerID,
+		}
+
+		row := mock.NewRows([]string{
+			"id", "title", "is_completed", "owner_id",
+			"created_at", "updated_at", "deleted_at",
+		}).AddRow(
+			mockTodoID, mockTodoTitle, mockTodo.IsCompleted, mockTodoOwnerID,
+			mockTodo.CreatedAt, mockTodo.UpdatedAt, mockTodo.DeletedAt,
+		)
+
+		mockNewTitle := "mock-new-title"
+		mockTodoForm := forms.Todo{
+			Title:       mockNewTitle,
+			IsCompleted: mockTodo.IsCompleted,
+			OwnerID:     mockTodoOwnerID,
+		}
+
+		mock.ExpectQuery(selectQuery).WithArgs(mockTodoID).WillReturnRows(row)
+		mock.ExpectBegin()
+		mock.ExpectExec(updateQuery).
+			WithArgs(
+				tests.AnyTime{}, tests.AnyTime{}, nil,
+				mockNewTitle, mockTodo.IsCompleted, mockTodoOwnerID, mockTodoID,
+			).
+			WillReturnResult(sqlmock.NewResult(1, 1))
+		mock.ExpectCommit()
+
+		UpdateTodoByID(mockTodoID, mockTodoForm)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+	})
+
+	t.Run("with ownership transfer", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		todoID := uuid.New()
+		todoTitle := "mock-todo-title"
+		ownerID := uuid.New()
+		newOwnerID := uuid.New()
+
+		row := mock.NewRows([]string{"id", "title", "is_completed", "owner_id"}).
+			AddRow(todoID, todoTitle, false, ownerID)
+
+		mockTodoForm := forms.Todo{
+			Title:       todoTitle,
+			IsCompleted: false,
+			OwnerID:     newOwnerID,
+		}
+
+		mock.ExpectQuery(selectQuery).WithArgs(todoID).WillReturnRows(row)
+		defer func() {
+			if recover() == nil {
+				t.Errorf("expected panic")
+			}
+		}()
+
+		UpdateTodoByID(todoID, mockTodoForm)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+	})
+
+	t.Run("with non-existing todo", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		todoID := uuid.New()
+		ownerID := uuid.New()
+
+		mockTodoForm := forms.Todo{
+			Title:   "new-title",
+			OwnerID: ownerID,
+		}
+
+		mock.ExpectQuery(selectQuery).WithArgs(todoID).
+			WillReturnError(gorm.ErrRecordNotFound)
+
+		UpdateTodoByID(todoID, mockTodoForm)
 
 		if err := mock.ExpectationsWereMet(); err != nil {
 			t.Errorf("unfulfilled expectations: %v", err)

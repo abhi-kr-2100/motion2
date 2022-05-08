@@ -51,3 +51,24 @@ func DeleteTodoByID(id uuid.UUID) error {
 
 	return nil
 }
+
+func UpdateTodoByID(id uuid.UUID, form forms.Todo) (*models.Todo, error) {
+	var todo models.Todo
+	if err := database.DB().Where("id = ?", id).First(&todo).Error; err != nil {
+		return nil, err
+	}
+
+	if form.OwnerID != todo.OwnerID {
+		panic("queries: ownership transfer not yet supported")
+	}
+
+	todo.Title = form.Title
+	todo.IsCompleted = form.IsCompleted
+	todo.OwnerID = form.OwnerID
+
+	if err := database.DB().Save(&todo).Error; err != nil {
+		return nil, err
+	}
+
+	return &todo, nil
+}
