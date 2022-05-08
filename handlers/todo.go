@@ -142,3 +142,53 @@ func DeleteTodoByID(c *gin.Context) {
 		"message": fmt.Sprintf("todo with ID %s deleted", id),
 	})
 }
+
+// UpdateTodoByID updates a todo.
+//
+// PUT /todos/:id
+func UpdateTodoByID(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
+		})
+		return
+	}
+
+	var todoForm forms.Todo
+	if c.BindJSON(&todoForm) != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": fmt.Sprintf("failed to parse JSON: %v", err),
+		})
+		return
+	}
+
+	// queries.UpdateTodoByID panics when ownerID in the form is not the same
+	// as the ownerID of the todo. As updating ownerID is not allowed, we end
+	// with a forbidden error.
+	defer func() {
+		if r := recover(); r != nil {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+				"error": fmt.Sprintf("ownership transfer is not allowed: %v", r),
+			})
+		}
+	}()
+
+	updated, err := queries.UpdateTodoByID(id, todoForm)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": fmt.Sprintf("todo with ID %s does not exist", id),
+			})
+			return
+		}
+
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("failed to update todo with ID %s: %v", id, err),
+		})
+		return
+	}
+
+	todoView := views.FromTodo(*updated)
+	c.JSON(http.StatusOK, todoView)
+}
