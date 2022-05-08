@@ -22,6 +22,7 @@ func GetTodoByID(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
 		})
+		return
 	}
 
 	todo, err := queries.GetTodoByID(id)
@@ -84,6 +85,9 @@ func GetTodosByOwnerID(c *gin.Context) {
 func CreateTodo(c *gin.Context) {
 	var todoForm forms.Todo
 	if c.BindJSON(&todoForm) != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request body",
+		})
 		return
 	}
 
@@ -91,6 +95,7 @@ func CreateTodo(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "title is required",
 		})
+		return
 	}
 
 	todo, err := queries.CreateTodo(todoForm)
@@ -158,7 +163,7 @@ func UpdateTodoByID(c *gin.Context) {
 	var todoForm forms.Todo
 	if c.BindJSON(&todoForm) != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("failed to parse JSON: %v", err),
+			"error": "failed to parse JSON",
 		})
 		return
 	}
