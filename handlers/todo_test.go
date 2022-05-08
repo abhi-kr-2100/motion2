@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/abhi-kr-2100/motion2/database"
 	"github.com/abhi-kr-2100/motion2/database/models"
+	"github.com/abhi-kr-2100/motion2/database/models/forms"
 	"github.com/abhi-kr-2100/motion2/database/models/views"
 	"github.com/abhi-kr-2100/motion2/tests"
 
@@ -249,6 +251,105 @@ func TestGetTodosByOwnerID(t *testing.T) {
 
 		if len(todos) != 0 {
 			t.Errorf("tests: expected todos length %d, got %d", 0, len(todos))
+		}
+	})
+}
+
+func TestCreateTodo(t *testing.T) {
+	insertQuery := regexp.QuoteMeta(tests.Query_CreateTodo)
+	ownerSelectQuery := regexp.QuoteMeta(tests.Query_GetUserByID)
+
+	r := tests.EngineMock()
+	r.POST("/todos", CreateTodo)
+
+	t.Run("with a valid request", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockOwnerID := uuid.New()
+		mockOwnerUsername := "mock-owner-username"
+		mockOwnerPassword := "mock-owner-password"
+		mockOwner := models.NewUser(mockOwnerUsername, mockOwnerPassword)
+		mockOwner.ID = mockOwnerID
+
+		ownerRow := mock.NewRows([]string{"id", "username", "password_hash"}).
+			AddRow(mockOwnerID, mockOwnerUsername, mockOwner.PasswordHash)
+
+		mockTodoTitle := "mock-todo-title"
+		mockTodoForm := forms.Todo{
+			Title:   mockTodoTitle,
+			OwnerID: mockOwnerID,
+		}
+
+		mockTodoFormJSON, err := json.Marshal(mockTodoForm)
+		if err != nil {
+			t.Fatalf("tests: failed to marshal mock todo form: %v", err)
+		}
+
+		mock.ExpectQuery(ownerSelectQuery).WithArgs(mockOwnerID).WillReturnRows(ownerRow)
+
+		mock.ExpectBegin()
+		mock.ExpectQuery(insertQuery).
+			WithArgs(tests.AnyTime{}, tests.AnyTime{}, nil, mockTodoTitle, mockTodoForm.IsCompleted, mockOwnerID).
+			WillReturnRows(mock.NewRows(nil))
+		mock.ExpectCommit()
+
+		tests.PerformRequest(r, "POST", "/todos", bytes.NewBuffer(mockTodoFormJSON))
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+	})
+
+	t.Run("with non-existent owner ID", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockOwnerID := uuid.New()
+		mockTodoTitle := "mock-todo-title"
+		mockTodoForm := forms.Todo{
+			Title:   mockTodoTitle,
+			OwnerID: mockOwnerID,
+		}
+
+		mockTodoFormJSON, err := json.Marshal(mockTodoForm)
+		if err != nil {
+			t.Fatalf("tests: failed to marshal mock todo form: %v", err)
+		}
+
+		mock.ExpectQuery(ownerSelectQuery).WithArgs(mockOwnerID).WillReturnError(gorm.ErrRecordNotFound)
+		w := tests.PerformRequest(r, "POST", "/todos", bytes.NewBuffer(mockTodoFormJSON))
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+
+		if w.Code != http.StatusNotFound {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusNotFound, w.Code)
+		}
+	})
+
+	t.Run("with invalid form", func(t *testing.T) {
+		gormDB, db, _ := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockTodoName := "mock-todo-name"
+		mockTodoForm := struct{ Name string }{Name: mockTodoName}
+		mockTodoFormJSON, err := json.Marshal(mockTodoForm)
+		if err != nil {
+			t.Fatalf("tests: failed to marshal mock todo form: %v", err)
+		}
+
+		w := tests.PerformRequest(r, "POST", "/todos", bytes.NewBuffer(mockTodoFormJSON))
+
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusBadRequest, w.Code)
 		}
 	})
 }

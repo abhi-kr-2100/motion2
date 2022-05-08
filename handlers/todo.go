@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/abhi-kr-2100/motion2/database/models/forms"
 	"github.com/abhi-kr-2100/motion2/database/models/views"
 	"github.com/abhi-kr-2100/motion2/database/queries"
 	"github.com/gin-gonic/gin"
@@ -75,4 +76,38 @@ func GetTodosByOwnerID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, todoViews)
+}
+
+// CreateTodo creates a todo.
+//
+// POST /todos
+func CreateTodo(c *gin.Context) {
+	var todoForm forms.Todo
+	if c.BindJSON(&todoForm) != nil {
+		return
+	}
+
+	if todoForm.Title == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "title is required",
+		})
+	}
+
+	todo, err := queries.CreateTodo(todoForm)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+				"error": fmt.Sprintf("user with ID %s does not exist", todoForm.OwnerID),
+			})
+			return
+		}
+
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("failed to create todo: %v", err),
+		})
+		return
+	}
+
+	todoView := views.FromTodo(*todo)
+	c.JSON(http.StatusOK, todoView)
 }
