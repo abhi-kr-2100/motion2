@@ -21,5 +21,7 @@ func SetupRoutes(r *gin.Engine) {
 	r.GET("/users/:id", handlers.GetUserByID)
 	r.GET("/users", handlers.GetUserByUsername)
 	r.GET("/users/:id/todos", handlers.GetTodosByOwnerID)
+
 	r.GET("/todos/:id", handlers.GetTodoByID)
+	r.POST("/todos", handlers.CreateTodo)
 }
