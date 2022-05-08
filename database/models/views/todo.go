@@ -10,12 +10,17 @@ type Todo struct {
 
 	Title       string
 	IsCompleted bool
+
+	OwnerID uuid.UUID
 }
 
 func FromTodo(todo models.Todo) Todo {
 	return Todo{
-		ID:          todo.ID,
+		ID: todo.ID,
+
 		Title:       todo.Title,
 		IsCompleted: todo.IsCompleted,
+
+		OwnerID: todo.OwnerID,
 	}
 }
