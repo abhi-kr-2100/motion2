@@ -13,6 +13,28 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetTodos returns all todos owned by the currently logged-in user.
+// Actually, it returns all todos for now, but authorization will soon be
+// implemented.
+//
+// GET /todos
+func GetTodos(c *gin.Context) {
+	todos, err := queries.GetTodos()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": fmt.Sprintf("failed to get todos: %v", err),
+		})
+		return
+	}
+
+	todoViews := make([]views.Todo, len(todos))
+	for i, todo := range todos {
+		todoViews[i] = views.FromTodo(*todo)
+	}
+
+	c.JSON(http.StatusOK, todoViews)
+}
+
 // GetTodoByID returns a todo given the ID.
 //
 // GET /todos/:id

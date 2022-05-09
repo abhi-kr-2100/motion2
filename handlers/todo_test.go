@@ -20,6 +20,82 @@ import (
 	"gorm.io/gorm"
 )
 
+func TestGetTodos(t *testing.T) {
+	query := regexp.QuoteMeta(tests.Query_GetTodos)
+
+	r := tests.EngineMock()
+	r.GET("todos", GetTodos)
+
+	t.Run("with existing todos", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockTodos := make([]models.Todo, 10)
+		for i := 0; i < len(mockTodos); i++ {
+			mockTodos[i].ID = uuid.New()
+			mockTodos[i].Title = fmt.Sprintf("mock-todo-title-%d", i)
+			mockTodos[i].IsCompleted = i%2 == 0
+			mockTodos[i].OwnerID = uuid.New()
+		}
+
+		rows := mock.NewRows([]string{"id", "title", "owner_id", "is_completed", "deleted_at"})
+		for _, todo := range mockTodos {
+			rows = rows.AddRow(todo.ID, todo.Title, todo.OwnerID, todo.IsCompleted, todo.DeletedAt)
+		}
+
+		mock.ExpectQuery(query).WillReturnRows(rows)
+		w := tests.PerformRequest(r, "GET", "/todos", nil)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("tests: failed to expect database expectations: %v", err)
+		}
+
+		if w.Code != http.StatusOK {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusOK, w.Code)
+		}
+
+		var todos []views.Todo
+		if err := json.Unmarshal(w.Body.Bytes(), &todos); err != nil {
+			t.Errorf("tests: failed to unmarshal response body: %v", err)
+		}
+
+		if len(todos) != len(mockTodos) {
+			t.Fatalf("tests: expected %d todos, got %d", len(mockTodos), len(todos))
+		}
+
+		for _, todo := range todos {
+			var found bool
+			for _, mockTodo := range mockTodos {
+				if todo.ID != mockTodo.ID {
+					continue
+				}
+
+				if todo.Title != mockTodo.Title {
+					t.Errorf("tests: expected todo title %s, got %s", mockTodo.Title, todo.Title)
+					break
+				}
+				if todo.IsCompleted != mockTodo.IsCompleted {
+					t.Errorf("tests: expected todo is_completed %t, got %t", mockTodo.IsCompleted, todo.IsCompleted)
+					break
+				}
+				if todo.OwnerID != mockTodo.OwnerID {
+					t.Errorf("tests: expected todo owner_id %s, got %s", mockTodo.OwnerID, todo.OwnerID)
+					break
+				}
+
+				found = true
+				break
+			}
+
+			if !found {
+				t.Errorf("tests: failed to find todo with id %s", todo.ID)
+			}
+		}
+	})
+}
+
 func TestGetTodoByID(t *testing.T) {
 	query := regexp.QuoteMeta(tests.Query_GetTodoByID)
 
