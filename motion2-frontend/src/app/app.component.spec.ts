@@ -16,9 +16,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'motion2-frontend'`, () => {
+  it(`should have as title 'Motion2'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('motion2-frontend');
+    expect(app.title).toEqual('Motion2');
+  });
+
+  it(`should render title 'Motion2'`, () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('h1').textContent).toEqual('Motion2');
   });
 });
