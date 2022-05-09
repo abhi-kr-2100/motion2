@@ -1,1 +1,5 @@
-<p>todo-container works!</p>
+<ol>
+    <li *ngFor="let todo of todos">
+        <app-todo [id]="todo.id" [title]="todo.title" [isCompleted]="todo.isCompleted"></app-todo>
+    </li>
+</ol>
