@@ -3,23 +3,17 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TodoComponent } from './todo.component';
 
 describe('TodoComponent', () => {
-  let component: TodoComponent;
-  let fixture: ComponentFixture<TodoComponent>;
+  it('#toggleCompletionStatus should toggle the completion status', () => {
+    const comp = new TodoComponent();
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ TodoComponent ]
-    })
-    .compileComponents();
-  });
+    expect(comp.isCompleted).withContext('incomplete at first').toBe(false);
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(TodoComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    comp.toggleCompletionStatus();
+    expect(comp.isCompleted).withContext('complete after toggle').toBe(true);
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+    comp.toggleCompletionStatus();
+    expect(comp.isCompleted)
+      .withContext('incomplete after second toggle')
+      .toBe(false);
   });
 });
