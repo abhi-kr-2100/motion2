@@ -33,18 +33,26 @@ func loadConfig() *config {
 		panic(fmt.Sprintf("config: %s env variable not set", HostURLEnvVar))
 	}
 
+	allowedOrigin, ok := os.LookupEnv(AllowedOriginEnvVar)
+	if !ok {
+		panic(fmt.Sprintf("config: %s env variable not set", AllowedOriginEnvVar))
+	}
+
 	return &config{
-		DBConnURL: dbConnURL,
-		HostURL:   hostURL,
+		DBConnURL:     dbConnURL,
+		HostURL:       hostURL,
+		AllowedOrigin: allowedOrigin,
 	}
 }
 
 const (
-	DBConnURLEnvVar = "DATABASE_URL"
-	HostURLEnvVar   = "HOST_URL"
+	DBConnURLEnvVar     = "DATABASE_URL"
+	HostURLEnvVar       = "HOST_URL"
+	AllowedOriginEnvVar = "ALLOWED_ORIGIN"
 )
 
 type config struct {
-	DBConnURL string
-	HostURL   string
+	DBConnURL     string
+	HostURL       string
+	AllowedOrigin string
 }

@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/abhi-kr-2100/motion2/handlers"
+	"github.com/abhi-kr-2100/motion2/routes/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,6 +13,7 @@ func Engine() *gin.Engine {
 	if r == nil {
 		r = gin.Default()
 		SetupRoutes(r)
+		middlewares.SetupCORSMiddleware(r)
 	}
 
 	return r
