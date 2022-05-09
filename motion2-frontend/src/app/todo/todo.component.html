@@ -1,3 +1,3 @@
-<mat-checkbox checked="isCompleted" (change)="toggleCompletionStatus()">
+<mat-checkbox [checked]="isCompleted" (change)="toggleCompletionStatus()">
     <span class="todo-title">{{title}}</span>
 </mat-checkbox>
