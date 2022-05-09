@@ -8,6 +8,15 @@ import (
 	"github.com/google/uuid"
 )
 
+func GetTodos() ([]*models.Todo, error) {
+	var todos []*models.Todo
+	if err := database.DB().Find(&todos).Error; err != nil {
+		return nil, err
+	}
+
+	return todos, nil
+}
+
 func GetTodoByID(id uuid.UUID) (*models.Todo, error) {
 	var todo models.Todo
 	if err := database.DB().Where("id = ?", id).First(&todo).Error; err != nil {

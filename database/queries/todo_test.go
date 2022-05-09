@@ -16,6 +16,96 @@ import (
 	"gorm.io/gorm"
 )
 
+func TestGetTodos(t *testing.T) {
+	query := regexp.QuoteMeta(tests.Query_GetTodos)
+
+	t.Run("with existing todos", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockTodos := make([]models.Todo, 10)
+		for i := 0; i < len(mockTodos); i++ {
+			mockTodos[i].ID = uuid.New()
+			mockTodos[i].Title = fmt.Sprintf("mock-todo-title-%d", i)
+			mockTodos[i].IsCompleted = i%2 == 0
+			mockTodos[i].OwnerID = uuid.New()
+		}
+
+		rows := mock.NewRows([]string{"id", "title", "is_completed", "owner_id", "deleted_at"})
+		for i := 0; i < len(mockTodos); i++ {
+			rows = rows.AddRow(
+				mockTodos[i].ID, mockTodos[i].Title, mockTodos[i].IsCompleted,
+				mockTodos[i].OwnerID, gorm.DeletedAt{},
+			)
+		}
+
+		mock.ExpectQuery(query).WillReturnRows(rows)
+
+		todos, err := GetTodos()
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+
+		if len(todos) != len(mockTodos) {
+			t.Errorf("expected to get %d todos, got %d", len(mockTodos), len(todos))
+		}
+
+		for _, todo := range todos {
+			var found bool
+			for _, mockTodo := range mockTodos {
+				if todo.ID != mockTodo.ID {
+					continue
+				}
+
+				if todo.Title != mockTodo.Title {
+					t.Errorf("expected todo title to be %v, got %v", mockTodo.Title, todo.Title)
+				}
+				if todo.IsCompleted != mockTodo.IsCompleted {
+					t.Errorf("expected todo is completed to be %v, got %v", mockTodo.IsCompleted, todo.IsCompleted)
+				}
+				if todo.OwnerID != mockTodo.OwnerID {
+					t.Errorf("expected todo owner ID to be %v, got %v", mockTodo.OwnerID, todo.OwnerID)
+				}
+
+				found = true
+				break
+			}
+
+			if !found {
+				t.Errorf("expected to get todo with ID %v, got none", todo.ID)
+			}
+		}
+	})
+
+	t.Run("with no todos", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mock.ExpectQuery(query).WillReturnRows(sqlmock.NewRows(nil))
+
+		todos, err := GetTodos()
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+
+		if len(todos) != 0 {
+			t.Errorf("expected to get no todos, got %d", len(todos))
+		}
+	})
+}
+
 func TestGetTodoByID(t *testing.T) {
 	query := regexp.QuoteMeta(tests.Query_GetTodoByID)
 
