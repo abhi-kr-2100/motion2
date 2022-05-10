@@ -16,7 +16,7 @@ describe('TodoService', () => {
     // TestBed.configureTestingModule({});
     // service = TestBed.inject(TodoService);
 
-    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get', 'put']);
+    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get', 'put', 'post']);
     service = new TodoService(httpClientSpy);
   });
 
@@ -100,5 +100,27 @@ describe('TodoService', () => {
     });
 
     expect(httpClientSpy.put.calls.count()).withContext('one call').toBe(1);
+  });
+
+  it('should be able to add todo', (done: DoneFn) => {
+    const title = 'title';
+    const expectedTodo: Todo = {
+      ID: uuid4(),
+      Title: title,
+      IsCompleted: false,
+      OwnerID: uuid4(),
+    };
+
+    httpClientSpy.post.and.returnValue(of(expectedTodo));
+
+    service.addTodo(title).subscribe({
+      next: (todo) => {
+        expect(todo).withContext('expected todo').toEqual(expectedTodo);
+        done();
+      },
+      error: done.fail,
+    });
+
+    expect(httpClientSpy.post.calls.count()).withContext('one call').toBe(1);
   });
 });

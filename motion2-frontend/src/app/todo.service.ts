@@ -6,12 +6,28 @@ import { Observable } from 'rxjs';
 import Todo from '../models/todo';
 
 const GetTodosURL = 'http://localhost:8080/todos';
+const AddTodoURL = 'http://localhost:8080/todos';
 const UpdateTodoURL = 'http://localhost:8080/todos/';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TodoService {
+  addTodo(title: string): Observable<Todo> {
+    const form: Todo = {
+      // Not used by the backend
+      ID: '',
+
+      Title: title,
+      IsCompleted: false,
+
+      // TODO: Add ownerID
+      OwnerID: '',
+    };
+
+    return this.http.post<Todo>(AddTodoURL, form);
+  }
+
   getTodos(): Observable<Todo[]> {
     return this.http.get<Todo[]>(GetTodosURL);
   }
