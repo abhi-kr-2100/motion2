@@ -50,15 +50,15 @@ describe('TodoService', () => {
 
   it('markCompletionStatus should complete todo with true argument', (done: DoneFn) => {
     const mockIncompleteTodo = {
-      id: uuid4(),
-      title: 'title',
-      isCompleted: false,
-      ownerID: uuid4(),
+      ID: uuid4(),
+      Title: 'title',
+      IsCompleted: false,
+      OwnerID: uuid4(),
     };
 
     const mockCompleteTodo = {
       ...mockIncompleteTodo,
-      isCompleted: true,
+      IsCompleted: true,
     };
 
     httpClientSpy.put.and.returnValue(of(mockCompleteTodo));
@@ -77,15 +77,15 @@ describe('TodoService', () => {
 
   it('markCompletionStatus should make todo pending with false argument', (done: DoneFn) => {
     const mockIncompleteTodo = {
-      id: uuid4(),
-      title: 'title',
-      isCompleted: false,
-      ownerID: uuid4(),
+      ID: uuid4(),
+      Title: 'title',
+      IsCompleted: false,
+      OwnerID: uuid4(),
     };
 
     const mockCompleteTodo = {
       ...mockIncompleteTodo,
-      isCompleted: true,
+      IsCompleted: true,
     };
 
     httpClientSpy.put.and.returnValue(of(mockIncompleteTodo));
