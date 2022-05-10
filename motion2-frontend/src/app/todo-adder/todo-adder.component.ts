@@ -30,6 +30,8 @@ export class TodoAdderComponent implements OnInit {
           this.title = '';
           console.log(`Added todo: ${todo.Title}`);
         });
+
+        // TODO: Update the existing list of todos
       }
     });
   }
