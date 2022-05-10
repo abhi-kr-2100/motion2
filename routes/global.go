@@ -12,8 +12,8 @@ var r *gin.Engine
 func Engine() *gin.Engine {
 	if r == nil {
 		r = gin.Default()
-		SetupRoutes(r)
 		middlewares.SetupCORSMiddleware(r)
+		SetupRoutes(r)
 	}
 
 	return r
