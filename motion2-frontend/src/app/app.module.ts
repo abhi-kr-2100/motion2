@@ -7,18 +7,33 @@ import { AppComponent } from './app.component';
 import { TodoComponent } from './todo/todo.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDialogModule } from '@angular/material/dialog';
+
 import { TodoContainerComponent } from './todo-container/todo-container.component';
 import { TodoAdderComponent } from './todo-adder/todo-adder.component';
+import { TodoAdderDialog } from './todo-adder-dialog/todo-adder-dialog.component';
 
 @NgModule({
-  declarations: [AppComponent, TodoComponent, TodoContainerComponent, TodoAdderComponent],
+  declarations: [
+    AppComponent,
+    TodoComponent,
+    TodoContainerComponent,
+    TodoAdderComponent,
+    TodoAdderDialog,
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatCheckboxModule,
+    MatFormFieldModule,
+    MatDialogModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
