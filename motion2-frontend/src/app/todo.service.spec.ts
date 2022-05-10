@@ -28,10 +28,10 @@ describe('TodoService', () => {
     const expectedTodos: Todo[] = [];
     for (let i = 0; i < 10; ++i) {
       expectedTodos.push({
-        id: uuid4(),
-        title: `title ${i}`,
-        isCompleted: i % 2 == 0,
-        ownerID: uuid4(),
+        ID: uuid4(),
+        Title: `title ${i}`,
+        IsCompleted: i % 2 == 0,
+        OwnerID: uuid4(),
       });
     }
 

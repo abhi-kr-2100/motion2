@@ -31,10 +31,10 @@ describe('TodoContainerComponent', () => {
 
     for (let i = 0; i < 10; ++i) {
       mockTodos.push({
-        id: uuid4(),
-        title: `title ${i}`,
-        isCompleted: i % 2 == 0,
-        ownerID: uuid4(),
+        ID: uuid4(),
+        Title: `title ${i}`,
+        IsCompleted: i % 2 == 0,
+        OwnerID: uuid4(),
       });
     }
 
@@ -59,12 +59,12 @@ describe('TodoContainerComponent', () => {
     expect(todoItems.length).toBe(mockTodos.length);
     for (let i = 0; i < mockTodos.length; ++i) {
       const idAttr = todoItems[i].getAttribute('id');
-      expect(idAttr).withContext(`id is ${idAttr}`).toBe(mockTodos[i].id);
+      expect(idAttr).withContext(`id is ${idAttr}`).toBe(mockTodos[i].ID);
 
       const titleAttr = todoItems[i].getAttribute('title');
       expect(titleAttr)
         .withContext(`title is ${titleAttr}`)
-        .toBe(mockTodos[i].title);
+        .toBe(mockTodos[i].Title);
 
       // since isCompleted is a boolean, we can't use getAttribute to retrive
       // it

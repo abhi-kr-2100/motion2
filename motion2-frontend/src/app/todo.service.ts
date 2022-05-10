@@ -17,12 +17,12 @@ export class TodoService {
   }
 
   markCompletionStatus(todo: Todo, isCompleted: boolean): Observable<Todo> {
-    const url = UpdateTodoURL + todo.id;
+    const url = UpdateTodoURL + todo.ID;
 
     const updateForm = {
-      title: todo.title,
+      title: todo.Title,
       isCompleted: isCompleted,
-      ownerID: todo.ownerID,
+      ownerID: todo.OwnerID,
     };
 
     return this.http.put<Todo>(url, updateForm);
