@@ -9,9 +9,10 @@ import { TodoComponent } from './todo/todo.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { TodoContainerComponent } from './todo-container/todo-container.component';
+import { TodoAdderComponent } from './todo-adder/todo-adder.component';
 
 @NgModule({
-  declarations: [AppComponent, TodoComponent, TodoContainerComponent],
+  declarations: [AppComponent, TodoComponent, TodoContainerComponent, TodoAdderComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
