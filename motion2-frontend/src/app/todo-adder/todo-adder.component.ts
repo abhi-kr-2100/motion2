@@ -25,7 +25,12 @@ export class TodoAdderComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      this.title = result;
+      if (result !== '') {
+        this.addTodo(result).subscribe((todo) => {
+          this.title = '';
+          console.log(`Added todo: ${todo.Title}`);
+        });
+      }
     });
   }
 
