@@ -7,6 +7,7 @@ import (
 	dbService "github.com/abhi-kr-2100/motion2/database"
 	"github.com/abhi-kr-2100/motion2/database/models"
 	"github.com/abhi-kr-2100/motion2/tests"
+	"gorm.io/gorm"
 
 	"github.com/google/uuid"
 )
@@ -57,7 +58,7 @@ func TestGetUserByID(t *testing.T) {
 		dbService.SetCustomDB(gormDB)
 
 		mockUserID := uuid.New()
-		mock.ExpectQuery(query).WithArgs(mockUserID).WillReturnError(nil)
+		mock.ExpectQuery(query).WithArgs(mockUserID).WillReturnError(gorm.ErrRecordNotFound)
 
 		if _, err := GetUserByID(mockUserID); err == nil {
 			t.Error("expected error, got nil")
@@ -116,7 +117,7 @@ func TestGetUserByUsername(t *testing.T) {
 		dbService.SetCustomDB(gormDB)
 
 		mockUsername := "mock-username"
-		mock.ExpectQuery(query).WithArgs(mockUsername).WillReturnError(nil)
+		mock.ExpectQuery(query).WithArgs(mockUsername).WillReturnError(gorm.ErrRecordNotFound)
 
 		if _, err := GetUserByUsername(mockUsername); err == nil {
 			t.Error("expected error, got nil")

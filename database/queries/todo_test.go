@@ -145,7 +145,7 @@ func TestGetTodoByID(t *testing.T) {
 		database.SetCustomDB(gormDB)
 
 		mockTodoID := uuid.New()
-		mock.ExpectQuery(query).WithArgs(mockTodoID).WillReturnError(nil)
+		mock.ExpectQuery(query).WithArgs(mockTodoID).WillReturnError(gorm.ErrRecordNotFound)
 
 		if _, err := GetTodoByID(mockTodoID); err == nil {
 			t.Errorf("expected to get error, got nil")
@@ -267,7 +267,7 @@ func TestGetTodosByOwnerID(t *testing.T) {
 			}
 
 			if foundTodo == nil {
-				t.Errorf("expected to find todo with id %v", mockTodo.ID)
+				t.Fatalf("expected to find todo with id %v", mockTodo.ID)
 			}
 
 			if mockTodo.Title != foundTodo.Title {
