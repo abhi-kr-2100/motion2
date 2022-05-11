@@ -15,6 +15,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { TodoContainerComponent } from './todo-container/todo-container.component';
 import { TodoAdderComponent } from './todo-adder/todo-adder.component';
 import { TodoAdderDialog } from './todo-adder-dialog/todo-adder-dialog.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { TodoAdderDialog } from './todo-adder-dialog/todo-adder-dialog.component
     TodoContainerComponent,
     TodoAdderComponent,
     TodoAdderDialog,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
