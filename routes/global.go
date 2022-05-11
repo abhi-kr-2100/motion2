@@ -12,11 +12,16 @@ var r *gin.Engine
 func Engine() *gin.Engine {
 	if r == nil {
 		r = gin.Default()
-		middlewares.SetupCORSMiddleware(r)
+		SetupMiddlewares(r)
 		SetupRoutes(r)
 	}
 
 	return r
+}
+
+func SetupMiddlewares(r *gin.Engine) {
+	middlewares.SetupCORSMiddleware(r)
+	middlewares.SetupAuthMiddleware(r)
 }
 
 func SetupRoutes(r *gin.Engine) {
