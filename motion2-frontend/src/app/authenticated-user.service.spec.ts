@@ -10,6 +10,8 @@ describe('AuthenticatedUserService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({});
     service = TestBed.inject(AuthenticatedUserService);
+
+    localStorage.clear();
   });
 
   it('should be created', () => {
@@ -17,14 +19,26 @@ describe('AuthenticatedUserService', () => {
   });
 
   it('should set a logged in user', () => {
-    expect(false).toBeTrue();
+    const user: LoggedInUser = {
+      username: 'admin',
+      password: 'admin',
+    };
+
+    service.setUser(user);
+    expect(localStorage.getItem('user')).toBe(JSON.stringify(user));
   });
 
   it('should return the user when logged in', () => {
-    expect(false).toBeTrue();
+    const user: LoggedInUser = {
+      username: 'root',
+      password: 'toor',
+    };
+
+    service.setUser(user);
+    expect(service.getUser()).toEqual(user);
   });
 
   it('should return null when not logged in', () => {
-    expect(false).toBeTrue();
+    expect(service.getUser()).toBeNull();
   });
 });
