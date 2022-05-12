@@ -42,15 +42,32 @@ func EngineMock() *gin.Engine {
 	return r
 }
 
+func PerformRequestBasic(r http.Handler, req *http.Request) *httptest.ResponseRecorder {
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	return w
+}
+
 func PerformRequest(r http.Handler, method, path string, body io.Reader) *httptest.ResponseRecorder {
 	req, err := http.NewRequest(method, path, body)
 	if err != nil {
 		panic(fmt.Sprintf("tests: failed to create request: %v", err))
 	}
 
-	w := httptest.NewRecorder()
-	r.ServeHTTP(w, req)
-	return w
+	return PerformRequestBasic(r, req)
+}
+
+func PerformRequestWithHeaders(r http.Handler, method, path string, body io.Reader, headers map[string]string) *httptest.ResponseRecorder {
+	req, err := http.NewRequest(method, path, body)
+	if err != nil {
+		panic(fmt.Sprintf("tests: failed to create request: %v", err))
+	}
+
+	for k, v := range headers {
+		req.Header.Set(k, v)
+	}
+
+	return PerformRequestBasic(r, req)
 }
 
 // match any time argument in the arguments
