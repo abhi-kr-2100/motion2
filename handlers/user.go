@@ -74,3 +74,16 @@ func GetUserByUsername(c *gin.Context) {
 	userView := views.FromUser(*user)
 	c.JSON(http.StatusOK, userView)
 }
+
+// Is the user logged in?
+//
+// GET /users/login
+//
+// This is just a dummy endpoint which relies on the authentication middleware
+// to handle login but informs the client whether user is logged in.
+func LoginUser(c *gin.Context) {
+	// If we have reached this, user must be logged in already
+	c.JSON(http.StatusOK, gin.H{
+		"message": "user is logged in",
+	})
+}

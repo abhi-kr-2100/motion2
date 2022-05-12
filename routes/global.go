@@ -27,6 +27,7 @@ func SetupMiddlewares(r *gin.Engine) {
 func SetupRoutes(r *gin.Engine) {
 	r.GET("/users/:id", handlers.GetUserByID)
 	r.GET("/users/:id/todos", handlers.GetTodosByOwnerID)
+	r.GET("/users/login", handlers.LoginUser)
 
 	// Used as /users?username=xyz
 	r.GET("/users", handlers.GetUserByUsername)
