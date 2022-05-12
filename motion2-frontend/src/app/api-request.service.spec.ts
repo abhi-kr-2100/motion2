@@ -52,7 +52,7 @@ describe('ApiRequestService', () => {
       .withContext('spy was called with given value of password')
       .toBe(headers.Password);
     expect(httpClientSpy.get.calls.mostRecent().returnValue)
-      .withContext('spy returned stub value')
+      .withContext('service returned stub value')
       .toBe(stubVal);
   });
 
