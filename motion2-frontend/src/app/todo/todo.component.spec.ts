@@ -143,7 +143,35 @@ describe('TodoComponent', () => {
   });
 
   it('should delete todo', () => {
-    expect(false).toBeTruthy();
+    const todo: Todo = {
+      ID: uuid4(),
+      Title: 'mock title',
+      IsCompleted: true,
+      OwnerID: uuid4(),
+    };
+
+    const resp = { message: `todo with ID ${todo.ID} deleted` };
+    apiRequestSpy.delete.and.returnValue(of(resp));
+
+    const component = TestBed.createComponent(TodoComponent).componentInstance;
+    component.id = todo.ID;
+    component.title = todo.Title;
+    component.isCompleted = todo.IsCompleted;
+    component.ownerID = todo.OwnerID;
+
+    component.delete().subscribe({
+      next: (msg) => {
+        expect(msg).toEqual(resp);
+      },
+      error: (err) => {
+        expect(false).withContext("error shouldn't have occured").toBeTrue();
+      },
+    });
+
+    expect(apiRequestSpy.delete).toHaveBeenCalledTimes(1);
+    expect(apiRequestSpy.delete.calls.mostRecent().args[0]).toBe(
+      `/todos/${todo.ID}`
+    );
   });
 
   it('should render title', () => {

@@ -35,6 +35,10 @@ export class TodoComponent implements OnInit {
     return this.http.post<Todo>('/todos', form);
   }
 
+  delete() {
+    return this.http.delete(`/todos/${this.id}`);
+  }
+
   constructor(private http: ApiRequestService) {}
 
   ngOnInit(): void {}
