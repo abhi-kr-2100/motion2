@@ -181,7 +181,19 @@ describe('TodoComponent', () => {
   });
 
   it('should render title', () => {
-    expect(false).toBeTruthy();
+    const fixture = TestBed.createComponent(TodoComponent);
+
+    const component = fixture.componentInstance;
+    component.id = uuid4();
+    component.title = 'mock title';
+    component.isCompleted = false;
+    component.ownerID = uuid4();
+
+    fixture.detectChanges();
+
+    const elem = fixture.nativeElement;
+    const titleElem = elem.querySelector('.todo-title');
+    expect(titleElem.innerText).toBe(component.title);
   });
 
   it('should render checkbox', () => {
