@@ -20,49 +20,49 @@ export class ApiRequestService {
     return { headers: { Username: user.username, Password: user.password } };
   }
 
-  getWithHeaders(url: string, headers: any) {
+  getWithHeaders<T>(url: string, headers: any) {
     const fullURL = this.baseURL + url;
-    return this.http.get(fullURL, { headers: headers });
+    return this.http.get<T>(fullURL, { headers: headers });
   }
 
-  get(url: string) {
+  get<T>(url: string) {
     const options = this._getOptions();
     if (options === null) {
       return throwError(() => new Error('No authenticated user found'));
     }
 
     const fullURL = this.baseURL + url;
-    return this.http.get(fullURL, options);
+    return this.http.get<T>(fullURL, options);
   }
 
-  post(url: string, body?: any) {
+  post<T>(url: string, body?: any) {
     const options = this._getOptions();
     if (options === null) {
       return throwError(() => new Error('No authenticated user found'));
     }
 
     const fullURL = this.baseURL + url;
-    return this.http.post(fullURL, body, options);
+    return this.http.post<T>(fullURL, body, options);
   }
 
-  put(url: string, body?: any) {
+  put<T>(url: string, body?: any) {
     const options = this._getOptions();
     if (options === null) {
       return throwError(() => new Error('No authenticated user found'));
     }
 
     const fullURL = this.baseURL + url;
-    return this.http.put(fullURL, body, options);
+    return this.http.put<T>(fullURL, body, options);
   }
 
-  delete(url: string) {
+  delete<T>(url: string) {
     const options = this._getOptions();
     if (options === null) {
       return throwError(() => new Error('No authenticated user found'));
     }
 
     const fullURL = this.baseURL + url;
-    return this.http.delete(fullURL, options);
+    return this.http.delete<T>(fullURL, options);
   }
 
   constructor(

@@ -8,7 +8,8 @@ import { AuthenticatedUserService } from './authenticated-user.service';
 
 describe('ApiRequestService', () => {
   let service: ApiRequestService;
-  let authenticatedUserSpy: jasmine.SpyObj<any>;
+  let authenticatedUserSpy: jasmine.SpyObj<AuthenticatedUserService>;
+  // must use any because using HttpClient causes false TypeScript errors
   let httpClientSpy: jasmine.SpyObj<any>;
 
   beforeEach(() => {
