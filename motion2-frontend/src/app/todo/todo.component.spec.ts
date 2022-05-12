@@ -107,7 +107,39 @@ describe('TodoComponent', () => {
   });
 
   it('should change title', () => {
-    expect(false).toBeTruthy();
+    const updatedTodo: Todo = {
+      ID: uuid4(),
+      Title: 'updated',
+      IsCompleted: false,
+      OwnerID: uuid4(),
+    };
+
+    const form = {
+      ID: updatedTodo.ID,
+      Title: updatedTodo.Title,
+      IsCompleted: updatedTodo.IsCompleted,
+    };
+
+    apiRequestSpy.post.and.returnValue(of(updatedTodo));
+
+    const component = TestBed.createComponent(TodoComponent).componentInstance;
+    component.id = updatedTodo.ID;
+    component.title = 'mock-title';
+    component.isCompleted = updatedTodo.IsCompleted;
+    component.ownerID = updatedTodo.OwnerID;
+
+    component.updateTitle().subscribe({
+      next: (todo) => {
+        expect(todo).toEqual(updatedTodo);
+      },
+      error: (err) => {
+        expect(false).withContext("error shouldn't have occured").toBeTrue();
+      },
+    });
+
+    expect(apiRequestSpy.post).toHaveBeenCalledTimes(1);
+    expect(apiRequestSpy.post.calls.mostRecent().args[0]).toBe('/todos');
+    expect(apiRequestSpy.post.calls.mostRecent().args[1]).toEqual(form);
   });
 
   it('should delete todo', () => {

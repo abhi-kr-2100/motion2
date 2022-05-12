@@ -25,6 +25,16 @@ export class TodoComponent implements OnInit {
     return this.http.post<Todo>('/todos', form);
   }
 
+  updateTitle(): Observable<Todo> {
+    const form = {
+      ID: this.id,
+      Title: this.title,
+      IsCompleted: this.isCompleted,
+    };
+
+    return this.http.post<Todo>('/todos', form);
+  }
+
   constructor(private http: ApiRequestService) {}
 
   ngOnInit(): void {}
