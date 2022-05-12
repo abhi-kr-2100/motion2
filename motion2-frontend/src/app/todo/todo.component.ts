@@ -22,7 +22,7 @@ export class TodoComponent implements OnInit {
       IsCompleted: !this.isCompleted,
     };
 
-    return this.http.post<Todo>('/todos', form);
+    return this.http.put<Todo>(`/todos/${this.id}`, form);
   }
 
   updateTitle(): Observable<Todo> {
@@ -32,7 +32,7 @@ export class TodoComponent implements OnInit {
       IsCompleted: this.isCompleted,
     };
 
-    return this.http.post<Todo>('/todos', form);
+    return this.http.put<Todo>(`/todos/${this.id}`, form);
   }
 
   delete() {

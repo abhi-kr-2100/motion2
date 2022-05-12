@@ -48,7 +48,7 @@ describe('TodoComponent', () => {
       IsCompleted: updatedTodo.IsCompleted,
     };
 
-    apiRequestSpy.post.and.returnValue(of(updatedTodo));
+    apiRequestSpy.put.and.returnValue(of(updatedTodo));
 
     const component = TestBed.createComponent(TodoComponent).componentInstance;
     component.id = updatedTodo.ID;
@@ -65,9 +65,11 @@ describe('TodoComponent', () => {
       },
     });
 
-    expect(apiRequestSpy.post).toHaveBeenCalledTimes(1);
-    expect(apiRequestSpy.post.calls.mostRecent().args[0]).toBe('/todos');
-    expect(apiRequestSpy.post.calls.mostRecent().args[1]).toEqual(form);
+    expect(apiRequestSpy.put).toHaveBeenCalledTimes(1);
+    expect(apiRequestSpy.put.calls.mostRecent().args[0]).toBe(
+      `/todos/${updatedTodo.ID}`
+    );
+    expect(apiRequestSpy.put.calls.mostRecent().args[1]).toEqual(form);
   });
 
   it('should toggle completed todo to incomplete', () => {
@@ -84,7 +86,7 @@ describe('TodoComponent', () => {
       IsCompleted: updatedTodo.IsCompleted,
     };
 
-    apiRequestSpy.post.and.returnValue(of(updatedTodo));
+    apiRequestSpy.put.and.returnValue(of(updatedTodo));
 
     const component = TestBed.createComponent(TodoComponent).componentInstance;
     component.id = updatedTodo.ID;
@@ -101,9 +103,11 @@ describe('TodoComponent', () => {
       },
     });
 
-    expect(apiRequestSpy.post).toHaveBeenCalledTimes(1);
-    expect(apiRequestSpy.post.calls.mostRecent().args[0]).toBe('/todos');
-    expect(apiRequestSpy.post.calls.mostRecent().args[1]).toEqual(form);
+    expect(apiRequestSpy.put).toHaveBeenCalledTimes(1);
+    expect(apiRequestSpy.put.calls.mostRecent().args[0]).toBe(
+      `/todos/${updatedTodo.ID}`
+    );
+    expect(apiRequestSpy.put.calls.mostRecent().args[1]).toEqual(form);
   });
 
   it('should change title', () => {
@@ -120,7 +124,7 @@ describe('TodoComponent', () => {
       IsCompleted: updatedTodo.IsCompleted,
     };
 
-    apiRequestSpy.post.and.returnValue(of(updatedTodo));
+    apiRequestSpy.put.and.returnValue(of(updatedTodo));
 
     const component = TestBed.createComponent(TodoComponent).componentInstance;
     component.id = updatedTodo.ID;
@@ -137,9 +141,11 @@ describe('TodoComponent', () => {
       },
     });
 
-    expect(apiRequestSpy.post).toHaveBeenCalledTimes(1);
-    expect(apiRequestSpy.post.calls.mostRecent().args[0]).toBe('/todos');
-    expect(apiRequestSpy.post.calls.mostRecent().args[1]).toEqual(form);
+    expect(apiRequestSpy.put).toHaveBeenCalledTimes(1);
+    expect(apiRequestSpy.put.calls.mostRecent().args[0]).toBe(
+      `/todos/${updatedTodo.ID}`
+    );
+    expect(apiRequestSpy.put.calls.mostRecent().args[1]).toEqual(form);
   });
 
   it('should delete todo', () => {
