@@ -73,24 +73,28 @@ describe('ApiRequestService', () => {
       next: () => {
         expect(true).withContext('should not be called').toBeFalse();
       },
+      error: (err) => {},
     });
 
     service.post('/api/test').subscribe({
       next: () => {
         expect(true).withContext('should not be called').toBeFalse();
       },
+      error: (err) => {},
     });
 
     service.put('/api/test').subscribe({
       next: () => {
         expect(true).withContext('should not be called').toBeFalse();
       },
+      error: (err) => {},
     });
 
     service.delete('/api/test').subscribe({
       next: () => {
         expect(true).withContext('should not be called').toBeFalse();
       },
+      error: (err) => {},
     });
 
     expect(authenticatedUserSpy.getUser).toHaveBeenCalledTimes(4);
@@ -125,7 +129,7 @@ describe('ApiRequestService', () => {
       next: (val) => {
         expect(val).toEqual(stubObj);
       },
-      error: () => {
+      error: (err) => {
         expect(false).withContext('should not be called').toBeTrue();
       },
     });
@@ -164,7 +168,7 @@ describe('ApiRequestService', () => {
       next: (val) => {
         expect(val).toEqual(stubObj);
       },
-      error: () => {
+      error: (err) => {
         expect(false).withContext('should not be called').toBeTrue();
       },
     });
@@ -206,7 +210,7 @@ describe('ApiRequestService', () => {
       next: (val) => {
         expect(val).toEqual(stubObj);
       },
-      error: () => {
+      error: (err) => {
         expect(false).withContext('should not be called').toBeTrue();
       },
     });
@@ -247,7 +251,7 @@ describe('ApiRequestService', () => {
       next: (val) => {
         expect(val).toEqual(stubObj);
       },
-      error: () => {
+      error: (err) => {
         expect(false).withContext('should not be called').toBeTrue();
       },
     });
