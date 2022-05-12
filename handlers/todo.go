@@ -106,7 +106,7 @@ func GetTodosByOwnerID(c *gin.Context) {
 // POST /todos
 func CreateTodo(c *gin.Context) {
 	var todoForm forms.Todo
-	if c.BindJSON(&todoForm) != nil {
+	if err := c.ShouldBindJSON(&todoForm); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "invalid request body",
 		})
@@ -183,9 +183,16 @@ func UpdateTodoByID(c *gin.Context) {
 	}
 
 	var todoForm forms.Todo
-	if c.BindJSON(&todoForm) != nil {
+	if err := c.ShouldBindJSON(&todoForm); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "failed to parse JSON",
+		})
+		return
+	}
+
+	if todoForm.Title == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "title is required",
 		})
 		return
 	}

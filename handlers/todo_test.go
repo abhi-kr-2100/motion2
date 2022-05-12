@@ -416,12 +416,32 @@ func TestCreateTodo(t *testing.T) {
 
 		database.SetCustomDB(gormDB)
 
-		mockTodoName := "mock-todo-name"
-		mockTodoForm := struct{ Name string }{Name: mockTodoName}
+		mockTodoForm := ""
 		mockTodoFormJSON, err := json.Marshal(mockTodoForm)
 		if err != nil {
 			t.Fatalf("tests: failed to marshal mock todo form: %v", err)
 		}
+
+		w := tests.PerformRequest(r, "POST", "/todos", bytes.NewBuffer(mockTodoFormJSON))
+
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusBadRequest, w.Code)
+		}
+	})
+
+	t.Run("with empty title in form", func(t *testing.T) {
+		gormDB, db, _ := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockOwnerID := uuid.New()
+		mockTodoForm := forms.Todo{
+			Title:   "",
+			OwnerID: mockOwnerID,
+		}
+
+		mockTodoFormJSON, _ := json.Marshal(mockTodoForm)
 
 		w := tests.PerformRequest(r, "POST", "/todos", bytes.NewBuffer(mockTodoFormJSON))
 
@@ -687,6 +707,65 @@ func TestUpdateTodoByID(t *testing.T) {
 
 		if w.Code != http.StatusForbidden {
 			t.Errorf("tests: expected status code %d, got %d", http.StatusForbidden, w.Code)
+		}
+	})
+
+	t.Run("with invalid todo form", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockForm := ""
+		mockFormJSON, _ := json.Marshal(mockForm)
+
+		w := tests.PerformRequest(
+			r, "PUT", fmt.Sprintf("/todos/%s", uuid.New()),
+			bytes.NewBuffer(mockFormJSON),
+		)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusBadRequest, w.Code)
+		}
+	})
+
+	t.Run("with empty todo form", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockTodo := models.Todo{
+			Model: models.Model{
+				ID:        uuid.New(),
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
+				DeletedAt: gorm.DeletedAt{},
+			},
+
+			Title:       "mock-todo-title",
+			IsCompleted: false,
+			OwnerID:     uuid.New(),
+		}
+
+		mockForm := forms.Todo{}
+		mockFormJSON, _ := json.Marshal(mockForm)
+
+		w := tests.PerformRequest(
+			r, "PUT", fmt.Sprintf("/todos/%s", mockTodo.ID),
+			bytes.NewBuffer(mockFormJSON),
+		)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unfulfilled expectations: %v", err)
+		}
+
+		if w.Code != http.StatusBadRequest {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusBadRequest, w.Code)
 		}
 	})
 }
