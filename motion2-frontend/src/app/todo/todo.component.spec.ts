@@ -1,14 +1,21 @@
+import { HttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ApiRequestService } from '../api-request.service';
 
 import { TodoComponent } from './todo.component';
 
 describe('TodoComponent', () => {
   let component: TodoComponent;
   let fixture: ComponentFixture<TodoComponent>;
+  let apiRequestSpy = jasmine.createSpyObj<ApiRequestService>(
+    'ApiRequestService',
+    ['get', 'post', 'put', 'delete']
+  );
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [TodoComponent],
+      providers: [{ provide: ApiRequestService, useValue: apiRequestSpy }],
     }).compileComponents();
   });
 
