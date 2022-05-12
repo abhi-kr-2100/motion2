@@ -10,6 +10,7 @@ import (
 	"github.com/abhi-kr-2100/motion2/database"
 	"github.com/abhi-kr-2100/motion2/database/models"
 	"github.com/abhi-kr-2100/motion2/database/models/views"
+	"github.com/abhi-kr-2100/motion2/routes/middlewares"
 	"github.com/abhi-kr-2100/motion2/tests"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -156,6 +157,52 @@ func TestGetUserByUsername(t *testing.T) {
 		w := tests.PerformRequest(r, "GET", "/users", nil)
 		if w.Code != http.StatusForbidden {
 			t.Errorf("tests: expected status code %d, got %d", http.StatusForbidden, w.Code)
+		}
+	})
+}
+
+func TestLoginUser(t *testing.T) {
+	query := regexp.QuoteMeta(tests.Query_GetUserByUsername)
+
+	r := tests.EngineMock()
+	middlewares.SetupAuthMiddleware(r)
+	r.GET("users/login", LoginUser)
+
+	t.Run("with non-logged in user", func(t *testing.T) {
+		w := tests.PerformRequest(r, "GET", "/users/login", nil)
+		if w.Code != http.StatusUnauthorized {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusUnauthorized, w.Code)
+		}
+	})
+
+	t.Run("with logged in user", func(t *testing.T) {
+		gormDB, db, mock := tests.DBMocks()
+		defer db.Close()
+
+		database.SetCustomDB(gormDB)
+
+		mockUsername := "mock-username"
+		mockPassword := "mock-password"
+		mockUser := models.NewUser(mockUsername, mockPassword)
+		mockUser.ID = uuid.New()
+
+		headers := make(map[string]string)
+		headers["Username"] = mockUsername
+		headers["Password"] = mockPassword
+
+		row := mock.NewRows([]string{"id", "username", "password_hash"}).
+			AddRow(mockUser.ID, mockUsername, mockUser.PasswordHash)
+
+		mock.ExpectQuery(query).WithArgs(mockUsername).WillReturnRows(row)
+
+		w := tests.PerformRequestWithHeaders(r, "GET", "/users/login", nil, headers)
+
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("tests: failed to expect database expectations: %v", err)
+		}
+
+		if w.Code != http.StatusOK {
+			t.Errorf("tests: expected status code %d, got %d", http.StatusOK, w.Code)
 		}
 	})
 }
