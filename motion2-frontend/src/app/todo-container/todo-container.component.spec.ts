@@ -103,4 +103,15 @@ describe('TodoContainerComponent', () => {
     expect(http.get).toHaveBeenCalledTimes(1);
     expect(component.todos).toEqual(mockTodos);
   });
+
+  it('should render todos', () => {
+    const todoElements = fixture.nativeElement.querySelectorAll(
+      '.todo-item'
+    ) as HTMLElement[];
+    expect(todoElements.length).toEqual(mockTodos.length);
+
+    for (let i = 0; i < todoElements.length; i++) {
+      expect(todoElements[i].getAttribute('title')).toBe(mockTodos[i].Title);
+    }
+  });
 });
