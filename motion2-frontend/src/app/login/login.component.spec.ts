@@ -92,4 +92,24 @@ describe('LoginComponent', () => {
     component.login();
     expect(http.getWithHeaders).toHaveBeenCalledTimes(0);
   });
+
+  it('should render the login page', () => {
+    const elem: HTMLElement = fixture.nativeElement;
+
+    expect(elem.querySelector('input')).toBeTruthy();
+    expect(elem.querySelector('input[type="password"]')).toBeTruthy();
+    expect(elem.querySelector('button')?.textContent).toBe('Login');
+  });
+
+  it('should initiate login on button click', () => {
+    spyOn(component, 'login');
+
+    const elem: HTMLElement = fixture.nativeElement;
+    const loginBtn: HTMLButtonElement = elem.querySelector(
+      'button'
+    ) as HTMLButtonElement;
+
+    loginBtn.click();
+    expect(component.login).toHaveBeenCalledOnceWith();
+  });
 });
