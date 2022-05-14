@@ -18,6 +18,7 @@ describe('TodoComponent', () => {
       'ApiRequestService',
       ['get', 'post', 'put', 'delete']
     );
+
     await TestBed.configureTestingModule({
       declarations: [TodoComponent],
       providers: [{ provide: ApiRequestService, useValue: apiRequestSpy }],
@@ -26,7 +27,13 @@ describe('TodoComponent', () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(TodoComponent);
+
     component = fixture.componentInstance;
+    component.id = uuid4();
+    component.title = 'mock todo title';
+    component.isCompleted = Math.random() >= 0.5;
+    component.ownerID = uuid4();
+
     fixture.detectChanges();
   });
 
@@ -35,11 +42,13 @@ describe('TodoComponent', () => {
   });
 
   it('should toggle incomplete todo to complete', () => {
+    component.isCompleted = false;
+
     const updatedTodo: Todo = {
-      ID: uuid4(),
-      Title: 'mock-title',
-      IsCompleted: true,
-      OwnerID: uuid4(),
+      ID: component.id,
+      Title: component.title,
+      IsCompleted: !component.isCompleted,
+      OwnerID: component.ownerID,
     };
 
     const form = {
@@ -49,12 +58,6 @@ describe('TodoComponent', () => {
     };
 
     apiRequestSpy.put.and.returnValue(of(updatedTodo));
-
-    const component = TestBed.createComponent(TodoComponent).componentInstance;
-    component.id = updatedTodo.ID;
-    component.title = updatedTodo.Title;
-    component.isCompleted = !updatedTodo.IsCompleted;
-    component.ownerID = updatedTodo.OwnerID;
 
     component.toggleCompleted().subscribe({
       next: (todo) => {
@@ -73,11 +76,13 @@ describe('TodoComponent', () => {
   });
 
   it('should toggle completed todo to incomplete', () => {
+    component.isCompleted = true;
+
     const updatedTodo: Todo = {
-      ID: uuid4(),
-      Title: 'mock',
-      IsCompleted: false,
-      OwnerID: uuid4(),
+      ID: component.id,
+      Title: component.title,
+      IsCompleted: !component.isCompleted,
+      OwnerID: component.ownerID,
     };
 
     const form = {
@@ -87,12 +92,6 @@ describe('TodoComponent', () => {
     };
 
     apiRequestSpy.put.and.returnValue(of(updatedTodo));
-
-    const component = TestBed.createComponent(TodoComponent).componentInstance;
-    component.id = updatedTodo.ID;
-    component.title = updatedTodo.Title;
-    component.isCompleted = !updatedTodo.IsCompleted;
-    component.ownerID = updatedTodo.OwnerID;
 
     component.toggleCompleted().subscribe({
       next: (todo) => {
@@ -112,10 +111,10 @@ describe('TodoComponent', () => {
 
   it('should change title', () => {
     const updatedTodo: Todo = {
-      ID: uuid4(),
-      Title: 'updated',
-      IsCompleted: false,
-      OwnerID: uuid4(),
+      ID: component.id,
+      Title: component.title,
+      IsCompleted: component.isCompleted,
+      OwnerID: component.ownerID,
     };
 
     const form = {
@@ -125,12 +124,6 @@ describe('TodoComponent', () => {
     };
 
     apiRequestSpy.put.and.returnValue(of(updatedTodo));
-
-    const component = TestBed.createComponent(TodoComponent).componentInstance;
-    component.id = updatedTodo.ID;
-    component.title = 'mock-title';
-    component.isCompleted = updatedTodo.IsCompleted;
-    component.ownerID = updatedTodo.OwnerID;
 
     component.updateTitle().subscribe({
       next: (todo) => {
@@ -150,20 +143,14 @@ describe('TodoComponent', () => {
 
   it('should delete todo', () => {
     const todo: Todo = {
-      ID: uuid4(),
-      Title: 'mock title',
-      IsCompleted: true,
-      OwnerID: uuid4(),
+      ID: component.id,
+      Title: component.title,
+      IsCompleted: component.isCompleted,
+      OwnerID: component.ownerID,
     };
 
     const resp = { message: `todo with ID ${todo.ID} deleted` };
     apiRequestSpy.delete.and.returnValue(of(resp));
-
-    const component = TestBed.createComponent(TodoComponent).componentInstance;
-    component.id = todo.ID;
-    component.title = todo.Title;
-    component.isCompleted = todo.IsCompleted;
-    component.ownerID = todo.OwnerID;
 
     component.delete().subscribe({
       next: (msg) => {
@@ -181,16 +168,6 @@ describe('TodoComponent', () => {
   });
 
   it('should render title', () => {
-    const fixture = TestBed.createComponent(TodoComponent);
-
-    const component = fixture.componentInstance;
-    component.id = uuid4();
-    component.title = 'mock title';
-    component.isCompleted = false;
-    component.ownerID = uuid4();
-
-    fixture.detectChanges();
-
     const elem = fixture.nativeElement;
     const titleElem = elem.querySelector('.todo-title');
     expect(titleElem.innerText).toBe(component.title);

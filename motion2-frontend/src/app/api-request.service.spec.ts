@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
-import { LoggedInUser } from 'src/models/user';
 
+import { of } from 'rxjs';
+
+import { LoggedInUser } from '../models/user';
 import { ApiRequestService } from './api-request.service';
 import { AuthenticatedUserService } from './authenticated-user.service';
 
