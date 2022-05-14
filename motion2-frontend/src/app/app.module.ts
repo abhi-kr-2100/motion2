@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -11,10 +12,16 @@ import { TodoContainerComponent } from './todo-container/todo-container.componen
 import { LoginComponent } from './login/login.component';
 
 @NgModule({
-  declarations: [AppComponent, TodoComponent, TodoContainerComponent, LoginComponent],
+  declarations: [
+    AppComponent,
+    TodoComponent,
+    TodoContainerComponent,
+    LoginComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
     BrowserAnimationsModule,
     MatCheckboxModule,
   ],
