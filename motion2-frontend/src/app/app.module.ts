@@ -8,9 +8,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TodoComponent } from './todo/todo.component';
 import { TodoContainerComponent } from './todo-container/todo-container.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
-  declarations: [AppComponent, TodoComponent, TodoContainerComponent],
+  declarations: [AppComponent, TodoComponent, TodoContainerComponent, LoginComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
