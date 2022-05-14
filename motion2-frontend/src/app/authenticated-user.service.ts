@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 
+import { Observable, of, throwError } from 'rxjs';
+
+import { RawApiRequestService } from './raw-api-request.service';
 import { LoggedInUser } from '../models/user';
 
 @Injectable({
@@ -19,5 +22,18 @@ export class AuthenticatedUserService {
     return JSON.parse(user);
   }
 
-  constructor() {}
+  verify(): Observable<any> {
+    const cache = this.getUser();
+    if (cache === null) {
+      return throwError(() => {
+        'User not logged in';
+      });
+    }
+
+    return this.http.get('/users/login', {
+      headers: { Username: cache.username, Password: cache.password },
+    });
+  }
+
+  constructor(private http: RawApiRequestService) {}
 }
