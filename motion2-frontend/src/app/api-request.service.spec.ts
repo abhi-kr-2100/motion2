@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 
 import { of } from 'rxjs';
@@ -6,15 +5,16 @@ import { of } from 'rxjs';
 import { LoggedInUser } from '../models/user';
 import { ApiRequestService } from './api-request.service';
 import { AuthenticatedUserService } from './authenticated-user.service';
+import { RawApiRequestService } from './raw-api-request.service';
 
 describe('ApiRequestService', () => {
   let service: ApiRequestService;
   let authenticatedUserSpy: jasmine.SpyObj<AuthenticatedUserService>;
-  // must use any because using HttpClient causes false TypeScript errors
+  // must use any because using correct type causes false TypeScript errors
   let httpClientSpy: jasmine.SpyObj<any>;
 
   beforeEach(() => {
-    httpClientSpy = jasmine.createSpyObj('HttpClient', [
+    httpClientSpy = jasmine.createSpyObj('RawApiRequestService', [
       'get',
       'post',
       'put',
@@ -28,7 +28,7 @@ describe('ApiRequestService', () => {
     TestBed.configureTestingModule({
       providers: [
         ApiRequestService,
-        { provide: HttpClient, useValue: httpClientSpy },
+        { provide: RawApiRequestService, useValue: httpClientSpy },
         { provide: AuthenticatedUserService, useValue: authenticatedUserSpy },
       ],
     });
@@ -37,35 +37,6 @@ describe('ApiRequestService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
-  });
-
-  it('should make a get request given headers', () => {
-    const stubVal = of({ message: 'success' });
-    httpClientSpy.get.and.returnValue(stubVal);
-
-    const headers = {
-      Username: 'admin',
-      Password: 'admin',
-    };
-
-    expect(service.getWithHeaders('/api/test', headers))
-      .withContext('service returned stub value')
-      .toBe(stubVal);
-    expect(httpClientSpy.get)
-      .withContext('spy was called once')
-      .toHaveBeenCalledTimes(1);
-    expect(httpClientSpy.get.calls.mostRecent().args[0].endsWith('/api/test'))
-      .withContext('spy was called with given url')
-      .toBeTrue();
-    expect(httpClientSpy.get.calls.mostRecent().args[1].headers.Username)
-      .withContext('spy was called with given value of username')
-      .toBe(headers.Username);
-    expect(httpClientSpy.get.calls.mostRecent().args[1].headers.Password)
-      .withContext('spy was called with given value of password')
-      .toBe(headers.Password);
-    expect(httpClientSpy.get.calls.mostRecent().returnValue)
-      .withContext('service returned stub value')
-      .toBe(stubVal);
   });
 
   it('should not make any request if no user is logged in', () => {
@@ -129,7 +100,7 @@ describe('ApiRequestService', () => {
 
     service.get('/api/test').subscribe({
       next: (val) => {
-        expect(val).toEqual(stubObj);
+        expect(val as any).toEqual(stubObj);
       },
       error: (err) => {
         expect(false).withContext('should not be called').toBeTrue();
@@ -168,7 +139,7 @@ describe('ApiRequestService', () => {
     const stubBody = { test: 'test' };
     service.post('/api/test', stubBody).subscribe({
       next: (val) => {
-        expect(val).toEqual(stubObj);
+        expect(val as any).toEqual(stubObj);
       },
       error: (err) => {
         expect(false).withContext('should not be called').toBeTrue();
@@ -210,7 +181,7 @@ describe('ApiRequestService', () => {
     const stubBody = { test: 'test' };
     service.put('/api/test', stubBody).subscribe({
       next: (val) => {
-        expect(val).toEqual(stubObj);
+        expect(val as any).toEqual(stubObj);
       },
       error: (err) => {
         expect(false).withContext('should not be called').toBeTrue();
@@ -251,7 +222,7 @@ describe('ApiRequestService', () => {
 
     service.delete('/api/test').subscribe({
       next: (val) => {
-        expect(val).toEqual(stubObj);
+        expect(val as any).toEqual(stubObj);
       },
       error: (err) => {
         expect(false).withContext('should not be called').toBeTrue();

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiRequestService } from '../api-request.service';
+
+import { RawApiRequestService } from '../raw-api-request.service';
 import { AuthenticatedUserService } from '../authenticated-user.service';
 
 @Component({
@@ -17,7 +18,7 @@ export class LoginComponent implements OnInit {
     }
 
     this.http
-      .getWithHeaders(`/users/login`, {
+      .get(`/users/login`, {
         Username: this.username,
         Password: this.password,
       })
@@ -35,7 +36,7 @@ export class LoginComponent implements OnInit {
   }
 
   constructor(
-    private http: ApiRequestService,
+    private http: RawApiRequestService,
     private authenticatedUser: AuthenticatedUserService
   ) {}
 

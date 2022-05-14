@@ -1,17 +1,16 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+
+import { throwError } from 'rxjs';
 
 import { AuthenticatedUserService } from './authenticated-user.service';
 import { LoggedInUser } from '../models/user';
-import { throwError } from 'rxjs';
+import { RawApiRequestService } from './raw-api-request.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiRequestService {
-  baseURL = 'http://localhost:4200/';
-
-  _getOptions() {
+  private _getOptions() {
     const user: LoggedInUser | null = this.authenticatedUser.getUser();
     if (user === null) {
       return null;
@@ -20,19 +19,13 @@ export class ApiRequestService {
     return { headers: { Username: user.username, Password: user.password } };
   }
 
-  getWithHeaders<T>(url: string, headers: any) {
-    const fullURL = this.baseURL + url;
-    return this.http.get<T>(fullURL, { headers: headers });
-  }
-
   get<T>(url: string) {
     const options = this._getOptions();
     if (options === null) {
       return throwError(() => new Error('No authenticated user found'));
     }
 
-    const fullURL = this.baseURL + url;
-    return this.http.get<T>(fullURL, options);
+    return this.http.get<T>(url, options);
   }
 
   post<T>(url: string, body?: any) {
@@ -41,8 +34,7 @@ export class ApiRequestService {
       return throwError(() => new Error('No authenticated user found'));
     }
 
-    const fullURL = this.baseURL + url;
-    return this.http.post<T>(fullURL, body, options);
+    return this.http.post<T>(url, body, options);
   }
 
   put<T>(url: string, body?: any) {
@@ -51,8 +43,7 @@ export class ApiRequestService {
       return throwError(() => new Error('No authenticated user found'));
     }
 
-    const fullURL = this.baseURL + url;
-    return this.http.put<T>(fullURL, body, options);
+    return this.http.put<T>(url, body, options);
   }
 
   delete<T>(url: string) {
@@ -61,12 +52,11 @@ export class ApiRequestService {
       return throwError(() => new Error('No authenticated user found'));
     }
 
-    const fullURL = this.baseURL + url;
-    return this.http.delete<T>(fullURL, options);
+    return this.http.delete<T>(url, options);
   }
 
   constructor(
-    private http: HttpClient,
+    private http: RawApiRequestService,
     private authenticatedUser: AuthenticatedUserService
   ) {}
 }

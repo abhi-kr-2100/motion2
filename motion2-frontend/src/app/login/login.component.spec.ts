@@ -2,20 +2,18 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { of, throwError } from 'rxjs';
 
-import { ApiRequestService } from '../api-request.service';
+import { RawApiRequestService } from '../raw-api-request.service';
 import { AuthenticatedUserService } from '../authenticated-user.service';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let http: jasmine.SpyObj<ApiRequestService>;
+  let http: jasmine.SpyObj<RawApiRequestService>;
   let authenticatedUser: jasmine.SpyObj<AuthenticatedUserService>;
 
   beforeEach(async () => {
-    http = jasmine.createSpyObj<ApiRequestService>('ApiRequestService', [
-      'getWithHeaders',
-    ]);
+    http = jasmine.createSpyObj('RawApiRequestService', ['get']);
     authenticatedUser = jasmine.createSpyObj<AuthenticatedUserService>(
       'AuthenticatedUserService',
       ['setUser']
@@ -24,7 +22,7 @@ describe('LoginComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [LoginComponent],
       providers: [
-        { provide: ApiRequestService, useValue: http },
+        { provide: RawApiRequestService, useValue: http },
         { provide: AuthenticatedUserService, useValue: authenticatedUser },
       ],
     }).compileComponents();
@@ -44,14 +42,10 @@ describe('LoginComponent', () => {
   });
 
   it('should login given valid credentials', () => {
-    http.getWithHeaders.and.returnValue(
-      of({
-        message: 'user is logged in',
-      })
-    );
+    http.get.and.returnValue(of({ message: 'user is logged in' }));
 
     component.login();
-    expect(http.getWithHeaders).toHaveBeenCalledOnceWith(`/users/login`, {
+    expect(http.get).toHaveBeenCalledOnceWith(`/users/login`, {
       Username: component.username,
       Password: component.password,
     });
@@ -64,14 +58,14 @@ describe('LoginComponent', () => {
   it('should alert on failed login', () => {
     spyOn(window, 'alert');
 
-    http.getWithHeaders.and.returnValue(
+    http.get.and.returnValue(
       throwError(() => ({
         message: 'Username is required',
       }))
     );
 
     component.login();
-    expect(http.getWithHeaders).toHaveBeenCalledOnceWith(`/users/login`, {
+    expect(http.get).toHaveBeenCalledOnceWith(`/users/login`, {
       Username: component.username,
       Password: component.password,
     });
@@ -83,14 +77,14 @@ describe('LoginComponent', () => {
     component.username = '';
 
     component.login();
-    expect(http.getWithHeaders).toHaveBeenCalledTimes(0);
+    expect(http.get).toHaveBeenCalledTimes(0);
   });
 
   it('should not log in with empty password', () => {
     component.password = '';
 
     component.login();
-    expect(http.getWithHeaders).toHaveBeenCalledTimes(0);
+    expect(http.get).toHaveBeenCalledTimes(0);
   });
 
   it('should render the login page', () => {
