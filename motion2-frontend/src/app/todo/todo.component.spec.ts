@@ -1,16 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { v4 as uuid4 } from 'uuid';
+import { of } from 'rxjs';
 
 import { Todo } from 'src/models/todo';
 import { ApiRequestService } from '../api-request.service';
-
 import { TodoComponent } from './todo.component';
-import { of } from 'rxjs';
 
 describe('TodoComponent', () => {
   let component: TodoComponent;
   let fixture: ComponentFixture<TodoComponent>;
+  let loader: HarnessLoader;
   let apiRequestSpy: jasmine.SpyObj<ApiRequestService>;
 
   beforeEach(async () => {
@@ -20,6 +24,7 @@ describe('TodoComponent', () => {
     );
 
     await TestBed.configureTestingModule({
+      imports: [MatCheckboxModule],
       declarations: [TodoComponent],
       providers: [{ provide: ApiRequestService, useValue: apiRequestSpy }],
     }).compileComponents();
@@ -35,6 +40,8 @@ describe('TodoComponent', () => {
     component.ownerID = uuid4();
 
     fixture.detectChanges();
+
+    loader = TestbedHarnessEnvironment.loader(fixture);
   });
 
   it('should create', () => {
@@ -173,8 +180,20 @@ describe('TodoComponent', () => {
     expect(titleElem.innerText).toBe(component.title);
   });
 
-  it('should render checkbox', () => {
-    expect(false).toBeTruthy();
+  it('should render checkbox for incomplete task', async () => {
+    component.isCompleted = false;
+
+    const checkbox = await loader.getHarness(MatCheckboxHarness);
+    expect(await checkbox.getLabelText()).toBe(component.title);
+    expect(await checkbox.isChecked()).toBe(component.isCompleted);
+  });
+
+  it('should render checkbox for completed task', async () => {
+    component.isCompleted = true;
+
+    const checkbox = await loader.getHarness(MatCheckboxHarness);
+    expect(await checkbox.getLabelText()).toBe(component.title);
+    expect(await checkbox.isChecked()).toBe(component.isCompleted);
   });
 
   it('should render delete button', () => {
