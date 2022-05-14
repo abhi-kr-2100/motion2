@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/abhi-kr-2100/motion2/config"
 	"github.com/abhi-kr-2100/motion2/database/models"
@@ -11,11 +12,14 @@ import (
 )
 
 var db *gorm.DB
+var once sync.Once
 
 func DB() *gorm.DB {
-	if db == nil {
-		db = setupDB()
-	}
+	once.Do(func() {
+		if db == nil {
+			db = setupDB()
+		}
+	})
 
 	return db
 }

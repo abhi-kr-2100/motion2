@@ -3,16 +3,20 @@ package config
 import (
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/joho/godotenv"
 )
 
 var cfg *config
+var once sync.Once
 
 func Cfg() *config {
-	if cfg == nil {
-		cfg = loadConfig()
-	}
+	once.Do(func() {
+		if cfg == nil {
+			cfg = loadConfig()
+		}
+	})
 
 	return cfg
 }

@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"sync"
+
 	"github.com/abhi-kr-2100/motion2/handlers"
 	"github.com/abhi-kr-2100/motion2/routes/middlewares"
 
@@ -8,13 +10,16 @@ import (
 )
 
 var r *gin.Engine
+var once sync.Once
 
 func Engine() *gin.Engine {
-	if r == nil {
-		r = gin.Default()
-		SetupMiddlewares(r)
-		SetupRoutes(r)
-	}
+	once.Do(func() {
+		if r == nil {
+			r = gin.Default()
+			SetupMiddlewares(r)
+			SetupRoutes(r)
+		}
+	})
 
 	return r
 }
