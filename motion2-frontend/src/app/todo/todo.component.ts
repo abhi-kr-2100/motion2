@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Observable, of } from 'rxjs';
 import { Todo } from 'src/models/todo';
 
@@ -37,6 +38,19 @@ export class TodoComponent implements OnInit {
 
   delete() {
     return this.http.delete(`/todos/${this.id}`);
+  }
+
+  onCheckboxChange(event: MatCheckboxChange) {
+    if (this.isCompleted != event.checked) {
+      this.toggleCompleted().subscribe({
+        next: (updatedTodo) => {
+          this.isCompleted = updatedTodo.IsCompleted;
+        },
+        error: (err) => {
+          alert(`Couldn't update completion status of todo: ${err}`);
+        },
+      });
+    }
   }
 
   constructor(private http: ApiRequestService) {}

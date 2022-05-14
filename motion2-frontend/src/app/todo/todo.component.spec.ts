@@ -196,6 +196,44 @@ describe('TodoComponent', () => {
     expect(await checkbox.isChecked()).toBe(component.isCompleted);
   });
 
+  it('should complete task on check', async () => {
+    component.isCompleted = false;
+
+    const updatedTodo: Todo = {
+      ID: component.id,
+      Title: component.title,
+      IsCompleted: !component.isCompleted,
+      OwnerID: component.ownerID,
+    };
+
+    apiRequestSpy.put.and.returnValue(of(updatedTodo));
+
+    const checkbox = await loader.getHarness(MatCheckboxHarness);
+    await checkbox.toggle();
+
+    expect(await checkbox.isChecked()).toBe(updatedTodo.IsCompleted);
+    expect(component.isCompleted).toBe(updatedTodo.IsCompleted);
+  });
+
+  it('should mark completed task incomplete on check remove', async () => {
+    component.isCompleted = true;
+
+    const updatedTodo: Todo = {
+      ID: component.id,
+      Title: component.title,
+      IsCompleted: !component.isCompleted,
+      OwnerID: component.ownerID,
+    };
+
+    apiRequestSpy.put.and.returnValue(of(updatedTodo));
+
+    const checkbox = await loader.getHarness(MatCheckboxHarness);
+    await checkbox.toggle();
+
+    expect(await checkbox.isChecked()).toBe(updatedTodo.IsCompleted);
+    expect(component.isCompleted).toBe(updatedTodo.IsCompleted);
+  });
+
   it('should render delete button', () => {
     expect(false).toBeTruthy();
   });

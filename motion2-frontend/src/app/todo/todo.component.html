@@ -1,1 +1,3 @@
-<mat-checkbox [checked]="isCompleted" class="todo-title">{{ title }}</mat-checkbox>
+<mat-checkbox [checked]="isCompleted" class="todo-title" (change)="onCheckboxChange($event)">
+    {{ title }}
+</mat-checkbox>
