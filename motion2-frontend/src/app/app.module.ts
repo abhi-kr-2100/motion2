@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { TodoComponent } from './todo/todo.component';
 import { TodoContainerComponent } from './todo-container/todo-container.component';
 import { LoginComponent } from './login/login.component';
+import { TodoAppComponent } from './todo-app/todo-app.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { LoginComponent } from './login/login.component';
     TodoComponent,
     TodoContainerComponent,
     LoginComponent,
+    TodoAppComponent,
   ],
   imports: [
     BrowserModule,
