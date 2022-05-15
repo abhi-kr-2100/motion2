@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { RawApiRequestService } from '../raw-api-request.service';
 import { AuthenticatedUserService } from '../authenticated-user.service';
@@ -28,6 +29,7 @@ export class LoginComponent implements OnInit {
             username: this.username,
             password: this.password,
           });
+          this.router.navigate(['/']);
         },
         error: (err) => {
           alert(`Login failed: ${err}`);
@@ -36,6 +38,7 @@ export class LoginComponent implements OnInit {
   }
 
   constructor(
+    private router: Router,
     private http: RawApiRequestService,
     private authenticatedUser: AuthenticatedUserService
   ) {}

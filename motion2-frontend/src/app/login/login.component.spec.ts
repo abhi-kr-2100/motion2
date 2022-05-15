@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 
 import { of, throwError } from 'rxjs';
 
@@ -9,10 +10,12 @@ import { LoginComponent } from './login.component';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
+  let routerSpy: jasmine.SpyObj<Router>;
   let http: jasmine.SpyObj<RawApiRequestService>;
   let authenticatedUser: jasmine.SpyObj<AuthenticatedUserService>;
 
   beforeEach(async () => {
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     http = jasmine.createSpyObj('RawApiRequestService', ['get']);
     authenticatedUser = jasmine.createSpyObj<AuthenticatedUserService>(
       'AuthenticatedUserService',
@@ -22,6 +25,7 @@ describe('LoginComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [LoginComponent],
       providers: [
+        { provide: Router, useValue: routerSpy },
         { provide: RawApiRequestService, useValue: http },
         { provide: AuthenticatedUserService, useValue: authenticatedUser },
       ],
@@ -105,5 +109,13 @@ describe('LoginComponent', () => {
 
     loginBtn.click();
     expect(component.login).toHaveBeenCalledOnceWith();
+  });
+
+  it('should redirect to home page on successful login', () => {
+    routerSpy.navigate.and.returnValue(new Promise(() => true));
+    http.get.and.returnValue(of({ message: 'user is logged in' }));
+
+    component.login();
+    expect(routerSpy.navigate).toHaveBeenCalledOnceWith(['/']);
   });
 });
