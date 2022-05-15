@@ -52,6 +52,9 @@ describe('AuthenticatedUserService', () => {
       next: () => {
         expect(false).toBeTrue();
       },
+      error: () => {
+        expect(true).toBeTrue();
+      },
     });
   });
 
