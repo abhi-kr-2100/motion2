@@ -64,8 +64,6 @@ describe('AuthenticatedUserService', () => {
       password: 'oldpassword',
     };
 
-    service.setUser(user);
-
     spyOn(service, 'getUser').and.returnValue(user);
     httpSpy.get.and.returnValue(
       throwError(() => ({
