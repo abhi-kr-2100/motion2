@@ -8,9 +8,8 @@ describe('TodoAppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TodoAppComponent ]
-    })
-    .compileComponents();
+      declarations: [TodoAppComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -21,5 +20,11 @@ describe('TodoAppComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should render todo container', () => {
+    const main = fixture.nativeElement as HTMLElement;
+    const todoContainer = main.querySelector('app-todo-container');
+    expect(todoContainer).toBeTruthy();
   });
 });
