@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class RawApiRequestService {
-  baseURL = 'http://localhost:4200/';
+  baseURL = 'http://localhost:8080';
 
   get<T>(url: string, option?: any): Observable<any> {
     const fullURL = this.baseURL + url;
