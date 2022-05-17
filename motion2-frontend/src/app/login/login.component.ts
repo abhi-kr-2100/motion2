@@ -20,8 +20,10 @@ export class LoginComponent implements OnInit {
 
     this.http
       .get(`/users/login`, {
-        Username: this.username,
-        Password: this.password,
+        headers: {
+          Username: this.username,
+          Password: this.password,
+        },
       })
       .subscribe({
         next: (_) => {

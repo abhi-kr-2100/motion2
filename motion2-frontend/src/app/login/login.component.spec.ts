@@ -50,8 +50,10 @@ describe('LoginComponent', () => {
 
     component.login();
     expect(http.get).toHaveBeenCalledOnceWith(`/users/login`, {
-      Username: component.username,
-      Password: component.password,
+      headers: {
+        Username: component.username,
+        Password: component.password,
+      },
     });
     expect(authenticatedUser.setUser).toHaveBeenCalledOnceWith({
       username: component.username,
@@ -70,8 +72,10 @@ describe('LoginComponent', () => {
 
     component.login();
     expect(http.get).toHaveBeenCalledOnceWith(`/users/login`, {
-      Username: component.username,
-      Password: component.password,
+      headers: {
+        Username: component.username,
+        Password: component.password,
+      },
     });
     expect(authenticatedUser.setUser).toHaveBeenCalledTimes(0);
     expect(window.alert).toHaveBeenCalledTimes(1);
