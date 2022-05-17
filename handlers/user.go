@@ -21,7 +21,7 @@ func GetUserByID(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
+			"message": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
 		})
 		return
 	}
@@ -30,13 +30,13 @@ func GetUserByID(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error": fmt.Sprintf("user with ID %s does not exist", id),
+				"message": fmt.Sprintf("user with ID %s does not exist", id),
 			})
 			return
 		}
 
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("failed to get user with ID %s: %v", id, err),
+			"message": fmt.Sprintf("failed to get user with ID %s: %v", id, err),
 		})
 		return
 	}
@@ -53,7 +53,7 @@ func GetUserByUsername(c *gin.Context) {
 	username, ok := c.GetQuery("username")
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
-			"error": "user can only be retrieved by username",
+			"message": "user can only be retrieved by username",
 		})
 		return
 	}
@@ -62,13 +62,13 @@ func GetUserByUsername(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error": fmt.Sprintf("user with username %s does not exist", username),
+				"message": fmt.Sprintf("user with username %s does not exist", username),
 			})
 			return
 		}
 
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("failed to get user with username %s: %v", username, err),
+			"message": fmt.Sprintf("failed to get user with username %s: %v", username, err),
 		})
 	}
 

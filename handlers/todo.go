@@ -22,7 +22,7 @@ func GetTodos(c *gin.Context) {
 	todos, err := queries.GetTodos()
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("failed to get todos: %v", err),
+			"message": fmt.Sprintf("failed to get todos: %v", err),
 		})
 		return
 	}
@@ -42,7 +42,7 @@ func GetTodoByID(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
+			"message": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
 		})
 		return
 	}
@@ -51,13 +51,13 @@ func GetTodoByID(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error": fmt.Sprintf("todo with ID %s does not exist", id),
+				"message": fmt.Sprintf("todo with ID %s does not exist", id),
 			})
 			return
 		}
 
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("failed to get todo with ID %s: %v", id, err),
+			"message": fmt.Sprintf("failed to get todo with ID %s: %v", id, err),
 		})
 		return
 	}
@@ -73,7 +73,7 @@ func GetTodosByOwnerID(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
+			"message": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
 		})
 		return
 	}
@@ -82,13 +82,13 @@ func GetTodosByOwnerID(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error": fmt.Sprintf("user with ID %s does not exist", id),
+				"message": fmt.Sprintf("user with ID %s does not exist", id),
 			})
 			return
 		}
 
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("failed to get todos for user with ID %s: %v", id, err),
+			"message": fmt.Sprintf("failed to get todos for user with ID %s: %v", id, err),
 		})
 		return
 	}
@@ -108,14 +108,14 @@ func CreateTodo(c *gin.Context) {
 	var todoForm forms.Todo
 	if err := c.ShouldBindJSON(&todoForm); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "invalid request body",
+			"message": "invalid request body",
 		})
 		return
 	}
 
 	if todoForm.Title == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "title is required",
+			"message": "title is required",
 		})
 		return
 	}
@@ -124,13 +124,13 @@ func CreateTodo(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error": fmt.Sprintf("user with ID %s does not exist", todoForm.OwnerID),
+				"message": fmt.Sprintf("user with ID %s does not exist", todoForm.OwnerID),
 			})
 			return
 		}
 
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("failed to create todo: %v", err),
+			"message": fmt.Sprintf("failed to create todo: %v", err),
 		})
 		return
 	}
@@ -146,7 +146,7 @@ func DeleteTodoByID(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
+			"message": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
 		})
 		return
 	}
@@ -154,13 +154,13 @@ func DeleteTodoByID(c *gin.Context) {
 	if err := queries.DeleteTodoByID(id); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error": fmt.Sprintf("todo with ID %s does not exist", id),
+				"message": fmt.Sprintf("todo with ID %s does not exist", id),
 			})
 			return
 		}
 
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("failed to delete todo with ID %s: %v", id, err),
+			"message": fmt.Sprintf("failed to delete todo with ID %s: %v", id, err),
 		})
 		return
 	}
@@ -177,7 +177,7 @@ func UpdateTodoByID(c *gin.Context) {
 	id, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
+			"message": fmt.Sprintf("%s is not a valid UUID: %v", c.Param("id"), err),
 		})
 		return
 	}
@@ -185,14 +185,14 @@ func UpdateTodoByID(c *gin.Context) {
 	var todoForm forms.Todo
 	if err := c.ShouldBindJSON(&todoForm); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "failed to parse JSON",
+			"message": "failed to parse JSON",
 		})
 		return
 	}
 
 	if todoForm.Title == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "title is required",
+			"message": "title is required",
 		})
 		return
 	}
@@ -203,7 +203,7 @@ func UpdateTodoByID(c *gin.Context) {
 	defer func() {
 		if r := recover(); r != nil {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
-				"error": fmt.Sprintf("ownership transfer is not allowed: %v", r),
+				"message": fmt.Sprintf("ownership transfer is not allowed: %v", r),
 			})
 		}
 	}()
@@ -212,13 +212,13 @@ func UpdateTodoByID(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error": fmt.Sprintf("todo with ID %s does not exist", id),
+				"message": fmt.Sprintf("todo with ID %s does not exist", id),
 			})
 			return
 		}
 
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("failed to update todo with ID %s: %v", id, err),
+			"message": fmt.Sprintf("failed to update todo with ID %s: %v", id, err),
 		})
 		return
 	}
