@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { of } from 'rxjs';
+import { v4 as uuid4 } from 'uuid';
 
 import { LoggedInUser } from '../models/user';
 import { ApiRequestService } from './api-request.service';
@@ -88,6 +89,7 @@ describe('ApiRequestService', () => {
 
   it('should make a get request with authenticated user', () => {
     const user: LoggedInUser = {
+      id: uuid4(),
       username: 'a-username',
       password: 'a-password',
     };
@@ -126,6 +128,7 @@ describe('ApiRequestService', () => {
 
   it('should make a post request with authenticated user', () => {
     const user: LoggedInUser = {
+      id: uuid4(),
       username: 'a-username',
       password: 'a-password',
     };
@@ -168,6 +171,7 @@ describe('ApiRequestService', () => {
 
   it('should make a put request with authenticated user', () => {
     const user: LoggedInUser = {
+      id: uuid4(),
       username: 'a-username',
       password: 'a-password',
     };
@@ -210,6 +214,7 @@ describe('ApiRequestService', () => {
 
   it('should make a delete request with authenticated user', () => {
     const user: LoggedInUser = {
+      id: uuid4(),
       username: 'a-username',
       password: 'a-password',
     };
