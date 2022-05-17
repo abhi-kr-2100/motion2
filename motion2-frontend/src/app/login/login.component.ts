@@ -26,8 +26,9 @@ export class LoginComponent implements OnInit {
         },
       })
       .subscribe({
-        next: (_) => {
+        next: (resp) => {
           this.authenticatedUser.setUser({
+            id: resp.id,
             username: this.username,
             password: this.password,
           });

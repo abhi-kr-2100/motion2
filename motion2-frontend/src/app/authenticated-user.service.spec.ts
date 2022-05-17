@@ -1,9 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 
+import { of, throwError } from 'rxjs';
+import { v4 as uuid4 } from 'uuid';
+
 import { AuthenticatedUserService } from './authenticated-user.service';
 import { RawApiRequestService } from './raw-api-request.service';
 import { LoggedInUser } from '../models/user';
-import { of, throwError } from 'rxjs';
 
 describe('AuthenticatedUserService', () => {
   let service: AuthenticatedUserService;
@@ -25,6 +27,7 @@ describe('AuthenticatedUserService', () => {
 
   it('should set a logged in user', () => {
     const user: LoggedInUser = {
+      id: uuid4(),
       username: 'admin',
       password: 'admin',
     };
@@ -35,6 +38,7 @@ describe('AuthenticatedUserService', () => {
 
   it('should return the user when logged in', () => {
     const user: LoggedInUser = {
+      id: uuid4(),
       username: 'root',
       password: 'toor',
     };
@@ -60,6 +64,7 @@ describe('AuthenticatedUserService', () => {
 
   it('should not verify if credentials have changed on server', () => {
     const user: LoggedInUser = {
+      id: uuid4(),
       username: 'admin',
       password: 'oldpassword',
     };
@@ -85,6 +90,7 @@ describe('AuthenticatedUserService', () => {
 
   it('should verify user if credentials are correct', () => {
     const user: LoggedInUser = {
+      id: uuid4(),
       username: 'admin',
       password: 'correctpass',
     };

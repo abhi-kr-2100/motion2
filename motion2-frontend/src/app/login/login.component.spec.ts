@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 
 import { of, throwError } from 'rxjs';
+import { v4 as uuid4 } from 'uuid';
 
 import { RawApiRequestService } from '../raw-api-request.service';
 import { AuthenticatedUserService } from '../authenticated-user.service';
@@ -46,7 +47,8 @@ describe('LoginComponent', () => {
   });
 
   it('should login given valid credentials', () => {
-    http.get.and.returnValue(of({ message: 'user is logged in' }));
+    const mockID = uuid4();
+    http.get.and.returnValue(of({ id: mockID, message: 'user is logged in' }));
 
     component.login();
     expect(http.get).toHaveBeenCalledOnceWith(`/users/login`, {
@@ -56,6 +58,7 @@ describe('LoginComponent', () => {
       },
     });
     expect(authenticatedUser.setUser).toHaveBeenCalledOnceWith({
+      id: mockID,
       username: component.username,
       password: component.password,
     });

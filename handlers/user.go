@@ -7,6 +7,7 @@ import (
 
 	"github.com/abhi-kr-2100/motion2/database/models/views"
 	"github.com/abhi-kr-2100/motion2/database/queries"
+	"github.com/abhi-kr-2100/motion2/routes/middlewares"
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
@@ -83,7 +84,9 @@ func GetUserByUsername(c *gin.Context) {
 // to handle login but informs the client whether user is logged in.
 func LoginUser(c *gin.Context) {
 	// If we have reached this, user must be logged in already
+	id, _ := c.Get(middlewares.UserIDKey)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user is logged in",
+		"id":      id,
 	})
 }
