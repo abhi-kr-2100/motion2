@@ -12,6 +12,6 @@ func SetupCORSMiddleware(r *gin.Engine) {
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: allowedOrigins,
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders: []string{"Content-Type"},
+		AllowHeaders: []string{"Content-Type", "Username", "Password"},
 	}))
 }
