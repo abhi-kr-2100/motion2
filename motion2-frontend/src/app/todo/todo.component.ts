@@ -47,7 +47,9 @@ export class TodoComponent implements OnInit {
           this.isCompleted = updatedTodo.IsCompleted;
         },
         error: (err) => {
-          alert(`Couldn't update completion status of todo: ${err}`);
+          alert(
+            `Couldn't update completion status of todo: ${JSON.stringify(err)}`
+          );
         },
       });
     }

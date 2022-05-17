@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/']);
         },
         error: (err) => {
-          alert(`Login failed: ${err}`);
+          alert(`Login failed: ${JSON.stringify(err)}`);
         },
       });
   }

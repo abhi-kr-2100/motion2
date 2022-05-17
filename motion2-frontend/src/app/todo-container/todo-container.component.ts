@@ -19,7 +19,7 @@ export class TodoContainerComponent implements OnInit {
         this.todos = todos;
       },
       error: (err) => {
-        alert(`Couldn't get todos: ${err}`);
+        alert(`Couldn't get todos: ${JSON.stringify(err)}`);
       },
     });
   }
