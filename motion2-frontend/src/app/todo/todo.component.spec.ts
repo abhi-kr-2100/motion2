@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 
 import { Todo } from 'src/models/todo';
 import { ApiRequestService } from '../api-request.service';
+import { AuthenticatedUserService } from '../authenticated-user.service';
 import { TodoComponent } from './todo.component';
 
 describe('TodoComponent', () => {
@@ -16,17 +17,24 @@ describe('TodoComponent', () => {
   let fixture: ComponentFixture<TodoComponent>;
   let loader: HarnessLoader;
   let apiRequestSpy: jasmine.SpyObj<ApiRequestService>;
+  let authenticatedUserSpy: jasmine.SpyObj<AuthenticatedUserService>;
 
   beforeEach(async () => {
     apiRequestSpy = jasmine.createSpyObj<ApiRequestService>(
       'ApiRequestService',
       ['get', 'post', 'put', 'delete']
     );
+    authenticatedUserSpy = jasmine.createSpyObj('AuthenticatedUserService', [
+      'getUser',
+    ]);
 
     await TestBed.configureTestingModule({
       imports: [MatCheckboxModule],
       declarations: [TodoComponent],
-      providers: [{ provide: ApiRequestService, useValue: apiRequestSpy }],
+      providers: [
+        { provide: ApiRequestService, useValue: apiRequestSpy },
+        { provide: AuthenticatedUserService, useValue: authenticatedUserSpy },
+      ],
     }).compileComponents();
   });
 
@@ -38,6 +46,12 @@ describe('TodoComponent', () => {
     component.title = 'mock todo title';
     component.isCompleted = Math.random() >= 0.5;
     component.ownerID = uuid4();
+
+    authenticatedUserSpy.getUser.and.returnValue({
+      id: component.ownerID,
+      username: 'mock',
+      password: 'letmein',
+    });
 
     fixture.detectChanges();
 
@@ -62,6 +76,7 @@ describe('TodoComponent', () => {
       ID: updatedTodo.ID,
       Title: updatedTodo.Title,
       IsCompleted: updatedTodo.IsCompleted,
+      OwnerID: updatedTodo.OwnerID,
     };
 
     apiRequestSpy.put.and.returnValue(of(updatedTodo));
@@ -96,6 +111,7 @@ describe('TodoComponent', () => {
       ID: updatedTodo.ID,
       Title: updatedTodo.Title,
       IsCompleted: updatedTodo.IsCompleted,
+      OwnerID: updatedTodo.OwnerID,
     };
 
     apiRequestSpy.put.and.returnValue(of(updatedTodo));

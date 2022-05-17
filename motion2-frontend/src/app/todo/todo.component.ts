@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { Todo } from 'src/models/todo';
 
 import { ApiRequestService } from '../api-request.service';
+import { AuthenticatedUserService } from '../authenticated-user.service';
 
 @Component({
   selector: 'app-todo',
@@ -21,6 +22,9 @@ export class TodoComponent implements OnInit {
       ID: this.id,
       Title: this.title,
       IsCompleted: !this.isCompleted,
+      // In the app, all users must login before they can visit the main todo
+      // app. Hence, getUser will never return null.
+      OwnerID: this.authenticatedUser.getUser()?.id,
     };
 
     return this.http.put<Todo>(`/todos/${this.id}`, form);
@@ -55,7 +59,10 @@ export class TodoComponent implements OnInit {
     }
   }
 
-  constructor(private http: ApiRequestService) {}
+  constructor(
+    private http: ApiRequestService,
+    private authenticatedUser: AuthenticatedUserService
+  ) {}
 
   ngOnInit(): void {}
 }
