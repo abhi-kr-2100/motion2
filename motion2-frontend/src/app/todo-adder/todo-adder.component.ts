@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+
+import { TodoAdderDialog } from './todo-adder.dialog';
 import { ApiRequestService } from '../api-request.service';
 import { AuthenticatedUserService } from '../authenticated-user.service';
 
@@ -36,9 +39,26 @@ export class TodoAdderComponent implements OnInit {
     });
   }
 
+  openDialog() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.closeOnNavigation = false;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = { title: this.newTodoTitle };
+
+    const dialogRef = this.dialog.open(TodoAdderDialog, dialogConfig);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.newTodoTitle = result.title;
+      if (result.added) {
+        this.createNewTodo();
+      }
+    });
+  }
+
   constructor(
     private http: ApiRequestService,
-    private authenticatedUser: AuthenticatedUserService
+    private authenticatedUser: AuthenticatedUserService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {}

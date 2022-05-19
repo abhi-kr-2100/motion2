@@ -2,9 +2,11 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +15,7 @@ import { TodoContainerComponent } from './todo-container/todo-container.componen
 import { LoginComponent } from './login/login.component';
 import { TodoAppComponent } from './todo-app/todo-app.component';
 import { TodoAdderComponent } from './todo-adder/todo-adder.component';
+import { TodoAdderDialog } from './todo-adder/todo-adder.dialog';
 
 @NgModule({
   declarations: [
@@ -22,6 +25,7 @@ import { TodoAdderComponent } from './todo-adder/todo-adder.component';
     LoginComponent,
     TodoAppComponent,
     TodoAdderComponent,
+    TodoAdderDialog,
   ],
   imports: [
     BrowserModule,
@@ -30,6 +34,8 @@ import { TodoAdderComponent } from './todo-adder/todo-adder.component';
     FormsModule,
     BrowserAnimationsModule,
     MatCheckboxModule,
+    MatDialogModule,
+    MatInputModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
