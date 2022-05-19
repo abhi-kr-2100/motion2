@@ -1,3 +1,5 @@
-<input placeholder="Username" [(ngModel)]="username">
-<input type="password" placeholder="Password" [(ngModel)]="password">
-<button (click)="login()">Login</button>
+<div class="w-[50vw] h-[50vh] px-[20%] rounded bg-gray-200 flex flex-col gap-y-5 justify-center">
+    <input placeholder="Username" [(ngModel)]="username" class="p-3 rounded">
+    <input type="password" placeholder="Password" [(ngModel)]="password" class="p-3 rounded">
+    <button (click)="login()" class="bg-yellow-400 p-3 rounded">Login</button>
+</div>
