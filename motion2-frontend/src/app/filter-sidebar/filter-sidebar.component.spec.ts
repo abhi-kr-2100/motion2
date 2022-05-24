@@ -6,7 +6,7 @@ describe('FilterSidebarComponent', () => {
   let component: FilterSidebarComponent;
   let fixture: ComponentFixture<FilterSidebarComponent>;
 
-  const filters = ['all', 'incomplete', 'completed'];
+  const filters = ['all', 'incomplete', 'complete'];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

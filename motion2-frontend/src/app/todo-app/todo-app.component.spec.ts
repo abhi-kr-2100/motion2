@@ -27,4 +27,16 @@ describe('TodoAppComponent', () => {
     const todoContainer = main.querySelector('app-todo-container');
     expect(todoContainer).toBeTruthy();
   });
+
+  it('should render add button', () => {
+    const main = fixture.nativeElement as HTMLElement;
+    const addButton = main.querySelector('app-todo-adder');
+    expect(addButton).toBeTruthy();
+  });
+
+  it('should render filter sidebar', () => {
+    const main = fixture.nativeElement as HTMLElement;
+    const filterSidebar = main.querySelector('app-filter-sidebar');
+    expect(filterSidebar).toBeTruthy();
+  });
 });

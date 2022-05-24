@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { Todo } from 'src/models/todo';
 
 import { ApiRequestService } from '../api-request.service';
@@ -9,7 +15,7 @@ import { ApiRequestService } from '../api-request.service';
   styleUrls: ['./todo-container.component.less'],
 })
 export class TodoContainerComponent implements OnInit {
-  @Input() filter: 'all' | 'incomplete' | 'complete' = 'all';
+  @Input() filter: string = 'all';
 
   todos: Todo[] = [];
   todosToRender: Todo[] = [];
@@ -20,21 +26,26 @@ export class TodoContainerComponent implements OnInit {
     this.http.get<Todo[]>('/todos').subscribe({
       next: (todos) => {
         this.todos = todos;
-        switch (this.filter) {
-          case 'all':
-            this.todosToRender = this.todos;
-            break;
-          case 'incomplete':
-            this.todosToRender = this.todos.filter((t) => !t.IsCompleted);
-            break;
-          case 'complete':
-            this.todosToRender = this.todos.filter((t) => t.IsCompleted);
-            break;
-        }
+        this.todosToRender = todos;
       },
       error: (err) => {
         alert(`Couldn't get todos: ${JSON.stringify(err)}`);
       },
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes['filter'].currentValue);
+    switch (changes['filter'].currentValue) {
+      case 'all':
+        this.todosToRender = this.todos;
+        break;
+      case 'incomplete':
+        this.todosToRender = this.todos.filter((t) => !t.IsCompleted);
+        break;
+      case 'complete':
+        this.todosToRender = this.todos.filter((t) => t.IsCompleted);
+        break;
+    }
   }
 }
