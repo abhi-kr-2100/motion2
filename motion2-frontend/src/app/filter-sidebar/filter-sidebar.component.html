@@ -1,1 +1,5 @@
-<p>filter-sidebar works!</p>
+<ol>
+    <li *ngFor="let filter of filters">
+        <button (click)="onFilterSelect(filter)">{{ filter }}</button>
+    </li>
+</ol>
