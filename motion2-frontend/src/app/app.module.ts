@@ -16,6 +16,7 @@ import { LoginComponent } from './login/login.component';
 import { TodoAppComponent } from './todo-app/todo-app.component';
 import { TodoAdderComponent } from './todo-adder/todo-adder.component';
 import { TodoAdderDialog } from './todo-adder/todo-adder.dialog';
+import { FilterSidebarComponent } from './filter-sidebar/filter-sidebar.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { TodoAdderDialog } from './todo-adder/todo-adder.dialog';
     TodoAppComponent,
     TodoAdderComponent,
     TodoAdderDialog,
+    FilterSidebarComponent,
   ],
   imports: [
     BrowserModule,
