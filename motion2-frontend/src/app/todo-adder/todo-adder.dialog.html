@@ -1,10 +1,10 @@
 <div class="dialog-title" mat-dialog-title>Add a todo</div>
 
 <mat-dialog-content>
-    <input matInput name="title" [(ngModel)]="data.title">
+    <input matInput name="title" [(ngModel)]="data.title" class="p-2 rounded text-black">
 </mat-dialog-content>
 
 <mat-dialog-actions>
-    <button class="todo-cancel-btn" mat-button (click)="cancel()">Cancel</button>
+    <button mat-button (click)="cancel()" class="todo-cancel-btn px-3">Cancel</button>
     <button class="todo-add-btn" mat-button mat-primary (click)="add()">Add</button>
 </mat-dialog-actions>
