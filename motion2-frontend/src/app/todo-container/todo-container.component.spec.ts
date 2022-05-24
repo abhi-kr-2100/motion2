@@ -102,9 +102,34 @@ describe('TodoContainerComponent', () => {
   it('should collect todos on init', () => {
     expect(http.get).toHaveBeenCalledTimes(1);
     expect(component.todos).toEqual(mockTodos);
+    expect(component.todosToRender).toEqual(mockTodos);
   });
 
-  it('should render todos', () => {
+  it("should collect todos on init with 'incomplete' filter", () => {
+    const fixture = TestBed.createComponent(TodoContainerComponent);
+    let component = fixture.componentInstance;
+    component.filter = 'incomplete';
+    fixture.detectChanges();
+
+    expect(component.todos).toEqual(mockTodos);
+    expect(component.todosToRender).toEqual(
+      mockTodos.filter((t) => !t.IsCompleted)
+    );
+  });
+
+  it("should collect todos on init with 'complete' filter", () => {
+    const fixture = TestBed.createComponent(TodoContainerComponent);
+    let component = fixture.componentInstance;
+    component.filter = 'complete';
+    fixture.detectChanges();
+
+    expect(component.todos).toEqual(mockTodos);
+    expect(component.todosToRender).toEqual(
+      mockTodos.filter((t) => t.IsCompleted)
+    );
+  });
+
+  it("should render todos with 'all' filter", () => {
     const todoElements = fixture.nativeElement.querySelectorAll(
       '.todo-item'
     ) as HTMLElement[];
@@ -113,5 +138,29 @@ describe('TodoContainerComponent', () => {
     for (let i = 0; i < todoElements.length; i++) {
       expect(todoElements[i].getAttribute('title')).toBe(mockTodos[i].Title);
     }
+  });
+
+  it("should render todos with 'incomplete' filter", () => {
+    const fixture = TestBed.createComponent(TodoContainerComponent);
+    let component = fixture.componentInstance;
+    component.filter = 'incomplete';
+    fixture.detectChanges();
+
+    const todoElements = fixture.nativeElement.querySelectorAll(
+      '.todo-item'
+    ) as HTMLElement[];
+    expect(todoElements.length).toEqual(mockTodos.length / 2);
+  });
+
+  it("should render todos with 'complete' filter", () => {
+    const fixture = TestBed.createComponent(TodoContainerComponent);
+    let component = fixture.componentInstance;
+    component.filter = 'complete';
+    fixture.detectChanges();
+
+    const todoElements = fixture.nativeElement.querySelectorAll(
+      '.todo-item'
+    ) as HTMLElement[];
+    expect(todoElements.length).toEqual(mockTodos.length / 2);
   });
 });
