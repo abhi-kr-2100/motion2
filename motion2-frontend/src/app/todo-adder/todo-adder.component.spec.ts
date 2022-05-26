@@ -13,6 +13,7 @@ import { v4 as uuid4 } from 'uuid';
 import { ApiRequestService } from '../api-request.service';
 import { AuthenticatedUserService } from '../authenticated-user.service';
 import { TodoAdderComponent } from './todo-adder.component';
+import { Todo } from 'src/models/todo';
 
 describe('TodoAdderComponent', () => {
   let component: TodoAdderComponent;
@@ -137,4 +138,21 @@ describe('TodoAdderComponent', () => {
   //   await closeBtn.click();
   //   expect(component.newTodoTitle).toBe(mockTitle);
   // });
+
+  it('should emit new todo when todo is added', () => {
+    const mockNewTodo: Todo = {
+      ID: uuid4(),
+      Title: 'mock title',
+      IsCompleted: false,
+      OwnerID: mockUserID,
+    };
+
+    apiRequestSpy.post.and.returnValue(of(mockNewTodo));
+
+    spyOn(component.newTodoAdded, 'emit');
+
+    component.newTodoTitle = mockNewTodo.Title;
+    component.createNewTodo();
+    expect(component.newTodoAdded.emit).toHaveBeenCalledWith(mockNewTodo);
+  });
 });

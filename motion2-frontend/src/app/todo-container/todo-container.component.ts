@@ -35,8 +35,7 @@ export class TodoContainerComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes['filter'].currentValue);
-    switch (changes['filter'].currentValue) {
+    switch (this.filter) {
       case 'all':
         this.todosToRender = this.todos;
         break;

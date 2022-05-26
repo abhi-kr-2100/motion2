@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 import { TodoAdderDialog } from './todo-adder.dialog';
 import { ApiRequestService } from '../api-request.service';
 import { AuthenticatedUserService } from '../authenticated-user.service';
+import { Todo } from 'src/models/todo';
 
 @Component({
   selector: 'app-todo-adder',
@@ -12,6 +13,8 @@ import { AuthenticatedUserService } from '../authenticated-user.service';
   styleUrls: ['./todo-adder.component.less'],
 })
 export class TodoAdderComponent implements OnInit {
+  @Output() newTodoAdded = new EventEmitter<Todo>();
+
   newTodoTitle: string = '';
 
   createNewTodo() {
@@ -27,9 +30,14 @@ export class TodoAdderComponent implements OnInit {
     };
 
     this.http.post('/todos', todoForm).subscribe({
-      next: (_) => {
+      next: (todo) => {
         this.newTodoTitle = '';
-        // TODO: Add the new todo to the list of all available todos
+        this.newTodoAdded.emit({
+          ID: todo.ID,
+          Title: todo.Title,
+          IsCompleted: todo.IsCompleted,
+          OwnerID: todo.OwnerID,
+        });
       },
       error: (err) => {
         alert(

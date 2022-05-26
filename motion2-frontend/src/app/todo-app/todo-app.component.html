@@ -1,5 +1,5 @@
 <div class="flex">
     <app-filter-sidebar [filters]="filters" (filterSelected)="selectFilter($event)" class="pr-2"></app-filter-sidebar>
-    <app-todo-container [filter]="selectedFilter" class="grow"></app-todo-container>
-    <app-todo-adder class="fixed bottom-10 right-10 p-5 rounded bg-yellow-300"></app-todo-adder>
+    <app-todo-container #container [filter]="selectedFilter" class="grow"></app-todo-container>
+    <app-todo-adder (newTodoAdded)="container.todos.push($event)" class="fixed bottom-10 right-10 p-5 rounded bg-yellow-300"></app-todo-adder>
 </div>
