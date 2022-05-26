@@ -1,5 +1,5 @@
 <ol>
-    <li *ngFor="let filter of filters">
-        <button (click)="onFilterSelect(filter)">{{ filter }}</button>
+    <li *ngFor="let filter of filters" class="m-1">
+        <button (click)="onFilterSelect(filter)" class="w-full text-right p-2 bg-gray-200 rounded capitalize">{{ filter }}</button>
     </li>
 </ol>

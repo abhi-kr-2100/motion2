@@ -1,3 +1,5 @@
-<app-filter-sidebar [filters]="filters" (filterSelected)="selectFilter($event)"></app-filter-sidebar>
-<app-todo-container [filter]="selectedFilter"></app-todo-container>
-<app-todo-adder class="fixed bottom-10 right-10 p-5 rounded bg-yellow-300"></app-todo-adder>
+<div class="flex">
+    <app-filter-sidebar [filters]="filters" (filterSelected)="selectFilter($event)" class="pr-2"></app-filter-sidebar>
+    <app-todo-container [filter]="selectedFilter" class="grow"></app-todo-container>
+    <app-todo-adder class="fixed bottom-10 right-10 p-5 rounded bg-yellow-300"></app-todo-adder>
+</div>
