@@ -8,6 +8,7 @@ import {
 import { Todo } from 'src/models/todo';
 
 import { ApiRequestService } from '../api-request.service';
+import { TodoComponent } from '../todo/todo.component';
 
 @Component({
   selector: 'app-todo-container',
@@ -45,6 +46,16 @@ export class TodoContainerComponent implements OnInit {
       case 'complete':
         this.todosToRender = this.todos.filter((t) => t.IsCompleted);
         break;
+    }
+  }
+
+  todoStatusChanged(todo: TodoComponent) {
+    for (let t of this.todos) {
+      if (t.ID === todo.id) {
+        t.IsCompleted = todo.isCompleted;
+        this.ngOnChanges({});
+        return;
+      }
     }
   }
 }

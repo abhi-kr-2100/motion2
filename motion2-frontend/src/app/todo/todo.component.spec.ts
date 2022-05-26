@@ -2,7 +2,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import {
+  MatCheckbox,
+  MatCheckboxChange,
+  MatCheckboxModule,
+} from '@angular/material/checkbox';
 
 import { v4 as uuid4 } from 'uuid';
 import { of } from 'rxjs';
@@ -256,5 +260,23 @@ describe('TodoComponent', () => {
 
   it('should render editable title', () => {
     expect(false).toBeTruthy();
+  });
+
+  it('should emit event on todo completion status change', () => {
+    const mockUpdatedTodo: Todo = {
+      ID: component.id,
+      Title: component.title,
+      IsCompleted: !component.isCompleted,
+      OwnerID: component.ownerID,
+    };
+
+    apiRequestSpy.put.and.returnValue(of(mockUpdatedTodo));
+    let mockEvent = new MatCheckboxChange();
+    mockEvent.checked = mockUpdatedTodo.IsCompleted;
+
+    spyOn(component.statusToggled, 'emit');
+
+    component.onCheckboxChange(mockEvent);
+    expect(component.statusToggled.emit).toHaveBeenCalledOnceWith(component);
   });
 });

@@ -6,6 +6,7 @@
             [title]="todo.Title"
             [isCompleted]="todo.IsCompleted"
             [ownerID]="todo.OwnerID"
+            (statusToggled)="todoStatusChanged($event)"
         >
         </app-todo>
     </li>

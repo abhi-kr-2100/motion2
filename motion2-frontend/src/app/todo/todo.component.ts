@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Observable, of } from 'rxjs';
 import { Todo } from 'src/models/todo';
@@ -16,6 +16,8 @@ export class TodoComponent implements OnInit {
   @Input() title!: string;
   @Input() isCompleted!: boolean;
   @Input() ownerID!: string;
+
+  @Output() statusToggled = new EventEmitter<TodoComponent>();
 
   toggleCompleted(): Observable<Todo> {
     const form = {
@@ -49,6 +51,7 @@ export class TodoComponent implements OnInit {
       this.toggleCompleted().subscribe({
         next: (updatedTodo) => {
           this.isCompleted = updatedTodo.IsCompleted;
+          this.statusToggled.emit(this);
         },
         error: (err) => {
           alert(
