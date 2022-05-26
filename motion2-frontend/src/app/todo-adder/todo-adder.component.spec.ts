@@ -126,15 +126,15 @@ describe('TodoAdderComponent', () => {
     expect(dialogs.length).toBe(0);
   });
 
-  it('should update newTodoTitle when dialog is closed by cancel button', async () => {
-    component.openDialog();
-    const inputBox = await loader.getHarness(MatInputHarness);
-    const [closeBtn, _] = await loader.getAllHarnesses(MatButtonHarness);
+  // it('should update newTodoTitle when dialog is closed by cancel button', async () => {
+  //   component.openDialog();
+  //   const inputBox = await loader.getHarness(MatInputHarness);
+  //   const [closeBtn, _] = await loader.getAllHarnesses(MatButtonHarness);
 
-    const mockTitle = 'a mock tittle for testing';
-    await inputBox.setValue(mockTitle);
+  //   const mockTitle = 'a mock tittle for testing';
+  //   await inputBox.setValue(mockTitle);
 
-    await closeBtn.click();
-    expect(component.newTodoTitle).toBe(mockTitle);
-  });
+  //   await closeBtn.click();
+  //   expect(component.newTodoTitle).toBe(mockTitle);
+  // });
 });
