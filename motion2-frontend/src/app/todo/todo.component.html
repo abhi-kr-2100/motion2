@@ -1,6 +1,6 @@
-<div class="w-full p-2">
-    <mat-checkbox [checked]="isCompleted" class="todo-title" (change)="onCheckboxChange($event)">
+<div class="w-full flex justify-between">
+    <mat-checkbox [checked]="isCompleted" class="todo-title p-2" (change)="onCheckboxChange($event)">
         {{ title }}
     </mat-checkbox>
-    <button class="delete-button" (click)="onDeleteButtonClick()">Delete</button>
+    <button class="delete-button" (click)="onDeleteButtonClick()" class="bg-rose-900 p-2 text-slate-200">Delete</button>
 </div>
