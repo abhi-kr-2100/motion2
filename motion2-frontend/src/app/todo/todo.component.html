@@ -1,3 +1,6 @@
-<mat-checkbox [checked]="isCompleted" class="todo-title p-2 w-full" (change)="onCheckboxChange($event)">
-    {{ title }}
-</mat-checkbox>
+<div class="w-full p-2">
+    <mat-checkbox [checked]="isCompleted" class="todo-title" (change)="onCheckboxChange($event)">
+        {{ title }}
+    </mat-checkbox>
+    <button class="delete-button" (click)="onDeleteButtonClick()">Delete</button>
+</div>

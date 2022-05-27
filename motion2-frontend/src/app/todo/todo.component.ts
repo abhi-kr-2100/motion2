@@ -18,6 +18,7 @@ export class TodoComponent implements OnInit {
   @Input() ownerID!: string;
 
   @Output() statusToggled = new EventEmitter<TodoComponent>();
+  @Output() todoDeleted = new EventEmitter<TodoComponent>();
 
   toggleCompleted(): Observable<Todo> {
     const form = {
@@ -60,6 +61,17 @@ export class TodoComponent implements OnInit {
         },
       });
     }
+  }
+
+  onDeleteButtonClick() {
+    this.delete().subscribe({
+      next: () => {
+        this.todoDeleted.emit(this);
+      },
+      error: (err) => {
+        alert(`Couldn't delete todo: ${JSON.stringify(err)}`);
+      },
+    });
   }
 
   constructor(

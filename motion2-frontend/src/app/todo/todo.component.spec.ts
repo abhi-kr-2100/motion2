@@ -255,7 +255,27 @@ describe('TodoComponent', () => {
   });
 
   it('should render delete button', () => {
-    expect(false).toBeTruthy();
+    const deleteButton = fixture.nativeElement.querySelector('.delete-button');
+    expect(deleteButton).toBeTruthy();
+  });
+
+  it('should delete todo when delete button is clicked', () => {
+    spyOn(component, 'delete');
+
+    const deleteBtn = fixture.nativeElement.querySelector('.delete-button');
+    deleteBtn.click();
+
+    expect(component.delete).toHaveBeenCalledTimes(1);
+  });
+
+  it('should emit delete event when delete button is clicked', () => {
+    spyOn(component.todoDeleted, 'emit');
+    apiRequestSpy.delete.and.returnValue(of({ message: 'deleted' }));
+
+    const deleteBtn = fixture.nativeElement.querySelector('.delete-button');
+    deleteBtn.click();
+
+    expect(component.todoDeleted.emit).toHaveBeenCalledOnceWith(component);
   });
 
   it('should render editable title', () => {
