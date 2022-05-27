@@ -58,4 +58,14 @@ export class TodoContainerComponent implements OnInit {
       }
     }
   }
+
+  todoDeleted(todo: TodoComponent) {
+    for (let t of this.todos) {
+      if (t.ID === todo.id) {
+        this.todos.splice(this.todos.indexOf(t), 1);
+        this.ngOnChanges({});
+        return;
+      }
+    }
+  }
 }
